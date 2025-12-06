@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { productsAPI } from '../../../api/apiService';
-import Loader from '../../common/Loader';
-import Button from '../../common/Button';
-import { useCart } from '../../../hooks/useCart';
+import { productsAPI } from '../../api/apiService';
+import Loader from '../common/Loader';
+import Button from '../common/Button';
+import { useCart } from '../../hooks/useCart';
 
 const ProductGrid = () => {
     const [products, setProducts] = useState([]);

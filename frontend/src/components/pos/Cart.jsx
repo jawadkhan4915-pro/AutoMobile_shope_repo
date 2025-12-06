@@ -1,6 +1,6 @@
 import React from 'react';
-import { useCart } from '../../../hooks/useCart';
-import Button from '../../common/Button';
+import { useCart } from '../../hooks/useCart';
+import Button from '../common/Button';
 
 const Cart = ({ onCheckout }) => {
     const { cart, updateCartItem, removeFromCart, clearCart, loading } = useCart();

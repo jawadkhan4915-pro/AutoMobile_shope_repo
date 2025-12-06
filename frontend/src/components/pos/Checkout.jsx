@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { customersAPI, ordersAPI } from '../../../api/apiService';
-import Button from '../../common/Button';
-import Input from '../../common/Input';
-import Loader from '../../common/Loader';
-import { useCart } from '../../../hooks/useCart';
+import { customersAPI, ordersAPI } from '../../api/apiService';
+import Button from '../common/Button';
+import Input from '../common/Input';
+import Loader from '../common/Loader';
+import { useCart } from '../../hooks/useCart';
 
 const Checkout = ({ onClose, onComplete }) => {
     const { cart } = useCart();
