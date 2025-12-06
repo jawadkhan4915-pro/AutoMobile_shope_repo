@@ -65,33 +65,32 @@ const Checkout = ({ onClose, onComplete }) => {
     );
 
     return (
-        <div className="fixed inset-0 z-modal flex items-center justify-center p-4">
-            <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose}></div>
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg relative z-10 flex flex-col max-h-[90vh]">
-                <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-                    <h2 className="text-xl font-bold">Checkout</h2>
-                    <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl">&times;</button>
+        <div className="modal-backdrop">
+            <div className="modal flex flex-col">
+                <div className="modal-header">
+                    <h2 className="modal-title">Checkout</h2>
+                    <button onClick={onClose} className="modal-close">&times;</button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-4 flex-1 overflow-y-auto">
+                <form onSubmit={handleSubmit} className="modal-body flex-1 overflow-y-auto">
                     {/* Order Summary */}
-                    <div className="bg-gray-50 p-4 rounded-lg mb-6 border border-gray-200">
+                    <div className="glass-panel p-4 mb-4">
                         <div className="flex justify-between mb-2">
-                            <span className="text-gray-600">Subtotal</span>
+                            <span className="text-muted">Subtotal</span>
                             <span className="font-medium">${cart.total.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between mb-2">
-                            <span className="text-gray-600">Tax (10%)</span>
+                            <span className="text-muted">Tax (10%)</span>
                             <span className="font-medium">${(cart.total * 0.1).toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
+                        <div className="flex justify-between text-lg font-bold border-t border-glass pt-2 mt-2">
                             <span>Total To Pay</span>
                             <span className="text-primary">${totalAmount.toFixed(2)}</span>
                         </div>
                     </div>
 
                     {/* Customer Selection */}
-                    <div className="mb-6">
+                    <div className="mb-4">
                         <label className="form-label">Customer (Optional)</label>
                         <input
                             type="text"
@@ -101,22 +100,24 @@ const Checkout = ({ onClose, onComplete }) => {
                             onChange={(e) => setSearchCustomer(e.target.value)}
                         />
 
-                        <div className="max-h-32 overflow-y-auto border border-gray-200 rounded-md">
+                        <div className="max-h-32 overflow-y-auto border border-glass rounded-md">
                             {loading ? (
                                 <div className="p-2 text-center"><Loader size="sm" /></div>
                             ) : (
                                 <>
                                     <div
-                                        className={`p-2 cursor-pointer hover:bg-gray-50 ${!formData.customerId ? 'bg-primary-light text-white' : ''}`}
+                                        className={`p-2 cursor-pointer hover:bg-hover ${!formData.customerId ? 'bg-primary text-white' : ''}`}
                                         onClick={() => setFormData({ ...formData, customerId: '' })}
+                                        style={!formData.customerId ? { background: 'var(--color-primary)' } : {}}
                                     >
                                         Walk-in Customer
                                     </div>
                                     {filteredCustomers.map(customer => (
                                         <div
                                             key={customer.id || customer._id}
-                                            className={`p-2 cursor-pointer hover:bg-gray-50 flex justify-between ${formData.customerId === (customer.id || customer._id) ? 'bg-primary-light text-white' : ''}`}
+                                            className={`p-2 cursor-pointer hover:bg-hover flex justify-between ${formData.customerId === (customer.id || customer._id) ? 'bg-primary text-white' : ''}`}
                                             onClick={() => setFormData({ ...formData, customerId: customer.id || customer._id })}
+                                            style={formData.customerId === (customer.id || customer._id) ? { background: 'var(--color-primary)' } : {}}
                                         >
                                             <span>{customer.firstName} {customer.lastName}</span>
                                             <span className="text-xs opacity-75">{customer.phone}</span>
@@ -128,14 +129,14 @@ const Checkout = ({ onClose, onComplete }) => {
                     </div>
 
                     {/* Payment Method */}
-                    <div className="mb-6">
+                    <div className="mb-4">
                         <label className="form-label">Payment Method</label>
                         <div className="grid grid-cols-3 gap-3">
                             {['cash', 'card', 'mobile'].map(method => (
                                 <button
                                     key={method}
                                     type="button"
-                                    className={`p-3 border rounded-md capitalize ${formData.paymentMethod === method ? 'border-primary bg-primary-light text-white' : 'border-gray-200 hover:bg-gray-50'}`}
+                                    className={`p-3 border rounded-md capitalize transition-colors ${formData.paymentMethod === method ? 'btn-primary' : 'border-glass hover:bg-hover'}`}
                                     onClick={() => setFormData({ ...formData, paymentMethod: method })}
                                 >
                                     {method}
@@ -157,15 +158,15 @@ const Checkout = ({ onClose, onComplete }) => {
                     </div>
 
                     {/* Change */}
-                    <div className="text-right text-sm text-gray-600 mb-2">
-                        Change: <span className="font-bold text-gray-900">
+                    <div className="text-right text-sm text-muted mb-2">
+                        Change: <span className="font-bold text-main">
                             ${(parseFloat(formData.paymentAmount || 0) - totalAmount).toFixed(2)}
                         </span>
                     </div>
 
                 </form>
 
-                <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end gap-3">
+                <div className="modal-footer">
                     <Button variant="outline" onClick={onClose} disabled={processing}>Cancel</Button>
                     <Button variant="primary" onClick={handleSubmit} disabled={processing}>
                         {processing ? 'Processing...' : 'Complete Order'}

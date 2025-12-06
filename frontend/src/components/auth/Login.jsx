@@ -41,78 +41,80 @@ const Login = () => {
 
     return (
         <>
-            <div className="mb-6">
-                <h3 className="text-center text-xl font-bold">Sign in to your account</h3>
-                <p className="mt-2 text-center text-sm text-gray-600">
-                    Or{' '}
-                    <Link to="/register" className="font-medium text-primary hover:text-primary-dark">
-                        create a new account
-                    </Link>
-                </p>
-            </div>
-
-            {error && (
-                <div className="alert alert-danger mb-4">
-                    {error}
+            <>
+                <div className="mb-4 text-center">
+                    <h3 className="text-xl">Sign in to your account</h3>
+                    <p className="mt-2 text-muted">
+                        Or{' '}
+                        <Link to="/register" className="text-primary hover:text-accent">
+                            create a new account
+                        </Link>
+                    </p>
                 </div>
-            )}
 
-            <form onSubmit={handleSubmit}>
-                <Input
-                    label="Email address"
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="admin@admin.com"
-                />
+                {error && (
+                    <div style={{ color: 'var(--color-danger)', background: 'rgba(255, 0, 85, 0.1)', padding: '10px', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', textAlign: 'center' }}>
+                        {error}
+                    </div>
+                )}
 
-                <Input
-                    label="Password"
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    placeholder="••••••••"
-                />
+                <form onSubmit={handleSubmit}>
+                    <Input
+                        label="Email address"
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        placeholder="admin@admin.com"
+                    />
 
-                <div className="flex items-center justify-between mt-4 mb-6">
-                    <div className="flex items-center">
-                        <input
-                            id="remember_me"
-                            name="remember_me"
-                            type="checkbox"
-                            className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-                        />
-                        <label htmlFor="remember_me" className="ml-2 block text-sm text-gray-900">
-                            Remember me
-                        </label>
+                    <Input
+                        label="Password"
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        placeholder="••••••••"
+                    />
+
+                    <div className="flex items-center justify-between" style={{ margin: '1rem 0 1.5rem 0' }}>
+                        <div className="flex items-center">
+                            <input
+                                id="remember_me"
+                                name="remember_me"
+                                type="checkbox"
+                                style={{ width: '16px', height: '16px', accentColor: 'var(--color-primary)' }}
+                            />
+                            <label htmlFor="remember_me" className="ml-2 block text-sm text-main">
+                                Remember me
+                            </label>
+                        </div>
+
+                        <div className="text-sm">
+                            <a href="#" className="text-primary hover:text-accent">
+                                Forgot your password?
+                            </a>
+                        </div>
                     </div>
 
-                    <div className="text-sm">
-                        <a href="#" className="font-medium text-primary hover:text-primary-dark">
-                            Forgot your password?
-                        </a>
+                    <Button
+                        type="submit"
+                        variant="primary"
+                        className="w-full justify-center"
+                        disabled={loading}
+                    >
+                        {loading ? 'Signing in...' : 'Sign in'}
+                    </Button>
+
+                    <div className="mt-4 text-center text-sm text-muted">
+                        <p>Demo Credentials:</p>
+                        <p>Admin: admin@admin.com / pass@123</p>
+                        <p>Cashier: cashier@cashier.com / pass@123</p>
                     </div>
-                </div>
-
-                <Button
-                    type="submit"
-                    variant="primary"
-                    className="w-full justify-center"
-                    disabled={loading}
-                >
-                    {loading ? 'Signing in...' : 'Sign in'}
-                </Button>
-
-                <div className="mt-6 text-center text-xs text-gray-500">
-                    <p>Demo Credentials:</p>
-                    <p>Admin: admin@admin.com / pass@123</p>
-                    <p>Cashier: cashier@cashier.com / pass@123</p>
-                </div>
-            </form>
+                </form>
+            </>
         </>
     );
 };
