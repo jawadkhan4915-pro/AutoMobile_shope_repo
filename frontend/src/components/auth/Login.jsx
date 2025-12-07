@@ -40,25 +40,36 @@ const Login = () => {
     };
 
     return (
-        <>
-            <>
-                <div className="mb-4 text-center">
-                    <h3 className="text-xl">Sign in to your account</h3>
-                    <p className="mt-2 text-muted">
-                        Or{' '}
-                        <Link to="/register" className="text-primary hover:text-accent">
-                            create a new account
-                        </Link>
-                    </p>
+        <div className="animate-fade-in">
+            <div className="mb-4 text-center animate-slide-in-down">
+                <h3 className="text-xl" style={{ fontSize: '1.75rem', fontWeight: '700', marginBottom: '0.5rem' }}>
+                    Welcome Back
+                </h3>
+                <p className="mt-2 text-muted">
+                    Sign in to access your POS dashboard
+                </p>
+            </div>
+
+            {error && (
+                <div
+                    className="animate-slide-in-down"
+                    style={{
+                        color: 'var(--color-danger)',
+                        background: 'rgba(255, 0, 85, 0.1)',
+                        padding: '12px 16px',
+                        borderRadius: 'var(--radius-md)',
+                        marginBottom: '1.5rem',
+                        textAlign: 'center',
+                        border: '1px solid rgba(255, 0, 85, 0.3)',
+                        fontWeight: '500'
+                    }}
+                >
+                    {error}
                 </div>
+            )}
 
-                {error && (
-                    <div style={{ color: 'var(--color-danger)', background: 'rgba(255, 0, 85, 0.1)', padding: '10px', borderRadius: 'var(--radius-sm)', marginBottom: '1rem', textAlign: 'center' }}>
-                        {error}
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
+                <div className="animate-slide-in-up stagger-1">
                     <Input
                         label="Email address"
                         type="email"
@@ -68,7 +79,9 @@ const Login = () => {
                         required
                         placeholder="admin@admin.com"
                     />
+                </div>
 
+                <div className="animate-slide-in-up stagger-2">
                     <Input
                         label="Password"
                         type="password"
@@ -78,44 +91,89 @@ const Login = () => {
                         required
                         placeholder="••••••••"
                     />
+                </div>
 
-                    <div className="flex items-center justify-between" style={{ margin: '1rem 0 1.5rem 0' }}>
-                        <div className="flex items-center">
-                            <input
-                                id="remember_me"
-                                name="remember_me"
-                                type="checkbox"
-                                style={{ width: '16px', height: '16px', accentColor: 'var(--color-primary)' }}
-                            />
-                            <label htmlFor="remember_me" className="ml-2 block text-sm text-main">
-                                Remember me
-                            </label>
-                        </div>
-
-                        <div className="text-sm">
-                            <a href="#" className="text-primary hover:text-accent">
-                                Forgot your password?
-                            </a>
-                        </div>
+                <div
+                    className="flex items-center justify-between animate-slide-in-up stagger-3"
+                    style={{ margin: '1rem 0 1.5rem 0' }}
+                >
+                    <div className="flex items-center">
+                        <input
+                            id="remember_me"
+                            name="remember_me"
+                            type="checkbox"
+                            style={{
+                                width: '16px',
+                                height: '16px',
+                                accentColor: 'var(--color-primary)',
+                                cursor: 'pointer'
+                            }}
+                        />
+                        <label htmlFor="remember_me" className="ml-2 block text-sm text-main" style={{ cursor: 'pointer' }}>
+                            Remember me
+                        </label>
                     </div>
 
+                    <div className="text-sm">
+                        <a href="#" className="text-primary hover:text-accent">
+                            Forgot password?
+                        </a>
+                    </div>
+                </div>
+
+                <div className="animate-slide-in-up stagger-4">
                     <Button
                         type="submit"
                         variant="primary"
                         className="w-full justify-center"
                         disabled={loading}
+                        style={{
+                            padding: '14px 24px',
+                            fontSize: '1rem',
+                            fontWeight: '600'
+                        }}
                     >
-                        {loading ? 'Signing in...' : 'Sign in'}
+                        {loading ? (
+                            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                <span className="spinner-sm"></span>
+                                Signing in...
+                            </span>
+                        ) : (
+                            'Sign in'
+                        )}
                     </Button>
+                </div>
 
-                    <div className="mt-4 text-center text-sm text-muted">
-                        <p>Demo Credentials:</p>
-                        <p>Admin: admin@admin.com / pass@123</p>
-                        <p>Cashier: cashier@cashier.com / pass@123</p>
-                    </div>
-                </form>
-            </>
-        </>
+                <div className="mt-6 text-center animate-slide-in-up stagger-5">
+                    <p className="text-sm text-muted" style={{ marginBottom: '0.5rem' }}>
+                        Don't have an account?{' '}
+                        <Link to="/register" className="text-primary hover:text-accent font-semibold">
+                            Create one now
+                        </Link>
+                    </p>
+                </div>
+
+                <div
+                    className="mt-6 text-center text-sm animate-slide-in-up stagger-5"
+                    style={{
+                        background: 'rgba(0, 240, 255, 0.05)',
+                        padding: '16px',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px solid rgba(0, 240, 255, 0.2)'
+                    }}
+                >
+                    <p style={{ color: 'var(--color-primary)', fontWeight: '600', marginBottom: '8px' }}>
+                        Demo Credentials
+                    </p>
+                    <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '4px' }}>
+                        <strong>Admin:</strong> admin@admin.com / pass@123
+                    </p>
+                    <p className="text-muted" style={{ fontSize: '0.85rem' }}>
+                        <strong>Cashier:</strong> cashier@cashier.com / pass@123
+                    </p>
+                </div>
+            </form>
+        </div>
     );
 };
 

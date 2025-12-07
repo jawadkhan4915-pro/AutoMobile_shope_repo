@@ -27,10 +27,21 @@ const Dashboard = () => {
 
     return (
         <div className="p-4">
-            <h1 className="mb-4">Welcome back, {user?.name}!</h1>
+            <div className="animate-slide-in-down" style={{ marginBottom: '2rem' }}>
+                <h1 style={{ fontSize: '2rem', fontWeight: '700', marginBottom: '0.5rem' }}>
+                    Welcome back, <span style={{
+                        background: 'linear-gradient(135deg, var(--color-accent), var(--color-primary))',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
+                    }}>{user?.name}</span>!
+                </h1>
+                <p className="text-muted" style={{ fontSize: '1.1rem' }}>
+                    Here's what's happening with your store today
+                </p>
+            </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                <div className="stats-card">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div className="stats-card hover-lift animate-slide-in-up stagger-1">
                     <p className="stats-card-title">Today's Sales</p>
                     <p className="stats-card-value text-primary">${stats?.today?.sales.toFixed(2) || '0.00'}</p>
                     <p className="stats-card-change">
@@ -38,7 +49,7 @@ const Dashboard = () => {
                     </p>
                 </div>
 
-                <div className="stats-card" style={{ '--color-primary': '#00FF9D' }}>
+                <div className="stats-card hover-lift animate-slide-in-up stagger-2" style={{ '--color-primary': '#00FF9D' }}>
                     <p className="stats-card-title">Total Sales</p>
                     <p className="stats-card-value" style={{ background: 'linear-gradient(to right, #fff, #00FF9D)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                         ${stats?.total?.sales.toFixed(2) || '0.00'}
@@ -48,7 +59,7 @@ const Dashboard = () => {
                     </p>
                 </div>
 
-                <div className="stats-card" style={{ '--color-primary': '#FFB800' }}>
+                <div className="stats-card hover-lift animate-slide-in-up stagger-3" style={{ '--color-primary': '#FFB800' }}>
                     <p className="stats-card-title">Low Stock Items</p>
                     <p className="stats-card-value" style={{ background: 'linear-gradient(to right, #fff, #FFB800)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                         5
@@ -56,7 +67,7 @@ const Dashboard = () => {
                     <p className="stats-card-change">Requires attention</p>
                 </div>
 
-                <div className="stats-card" style={{ '--color-primary': '#00F0FF' }}>
+                <div className="stats-card hover-lift animate-slide-in-up stagger-4" style={{ '--color-primary': '#00F0FF' }}>
                     <p className="stats-card-title">Active Products</p>
                     <p className="stats-card-value" style={{ background: 'linear-gradient(to right, #fff, #00F0FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                         24
@@ -65,8 +76,8 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="card">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="card hover-lift animate-slide-in-up stagger-1">
                     <div className="card-header">
                         <h3 className="card-title">Recent Activity</h3>
                     </div>
@@ -75,22 +86,66 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <div className="card">
+                <div className="card hover-lift animate-slide-in-up stagger-2">
                     <div className="card-header">
                         <h3 className="card-title">Quick Actions</h3>
                     </div>
                     <div className="card-body grid grid-cols-2 gap-4">
-                        <a href="/pos" className="btn btn-primary text-center">
-                            New Sale (POS)
+                        <a
+                            href="/pos"
+                            className="btn btn-primary text-center hover-glow"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '16px 20px',
+                                fontSize: '0.95rem',
+                                fontWeight: '600'
+                            }}
+                        >
+                            🛒 New Sale
                         </a>
-                        <a href="/products" className="btn btn-secondary text-center">
-                            Add Product
+                        <a
+                            href="/products"
+                            className="btn btn-secondary text-center"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '16px 20px',
+                                fontSize: '0.95rem',
+                                fontWeight: '600'
+                            }}
+                        >
+                            📦 Products
                         </a>
-                        <a href="/customers" className="btn btn-secondary text-center">
-                            Add Customer
+                        <a
+                            href="/customers"
+                            className="btn btn-secondary text-center"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '16px 20px',
+                                fontSize: '0.95rem',
+                                fontWeight: '600'
+                            }}
+                        >
+                            👥 Customers
                         </a>
-                        <a href="/reports" className="btn btn-secondary text-center">
-                            View Reports
+                        <a
+                            href="/reports"
+                            className="btn btn-secondary text-center"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '16px 20px',
+                                fontSize: '0.95rem',
+                                fontWeight: '600'
+                            }}
+                        >
+                            📊 Reports
                         </a>
                     </div>
                 </div>
