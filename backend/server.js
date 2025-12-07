@@ -46,6 +46,15 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Root route
+app.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Welcome to the Easy POS API',
+        version: '1.0.0'
+    });
+});
+
 // Error handlers
 app.use(notFound);
 app.use(errorHandler);
