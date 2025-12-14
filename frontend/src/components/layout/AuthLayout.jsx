@@ -20,11 +20,9 @@ const AuthLayout = () => {
 
     return (
         <div
-            className="h-screen flex flex-col justify-center items-center p-4"
+            className="w-full h-screen overflow-y-auto overflow-x-hidden relative"
             style={{
                 background: 'linear-gradient(135deg, #0B0D17 0%, #1a1d2e 100%)',
-                position: 'relative',
-                overflow: 'hidden'
             }}
         >
             {/* Animated Background Elements */}
@@ -55,58 +53,58 @@ const AuthLayout = () => {
                 }}
             />
 
-            {/* Logo and Title */}
-            <div className="w-full text-center mb-8 animate-slide-in-down" style={{ maxWidth: '450px', position: 'relative', zIndex: 1 }}>
-                <div
-                    style={{
-                        display: 'inline-block',
-                        padding: '12px 24px',
-                        background: 'linear-gradient(135deg, rgba(112, 0, 255, 0.2), rgba(0, 240, 255, 0.2))',
-                        borderRadius: 'var(--radius-lg)',
-                        border: '1px solid rgba(0, 240, 255, 0.3)',
-                        marginBottom: '16px'
-                    }}
-                >
-                    <h1
-                        className="text-primary animate-glow"
+            {/* Scrollable Content Wrapper */}
+            <div className="min-h-full flex flex-col justify-center items-center p-4 relative z-10 py-12">
+                {/* Logo and Title */}
+                <div className="w-full text-center mb-8 animate-slide-in-down" style={{ maxWidth: '450px' }}>
+                    <div
                         style={{
-                            marginBottom: '0',
-                            fontSize: '2.5rem',
-                            fontWeight: '800',
-                            background: 'linear-gradient(135deg, var(--color-accent), var(--color-primary))',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            letterSpacing: '2px'
+                            display: 'inline-block',
+                            padding: '12px 24px',
+                            background: 'linear-gradient(135deg, rgba(112, 0, 255, 0.2), rgba(0, 240, 255, 0.2))',
+                            borderRadius: 'var(--radius-lg)',
+                            border: '1px solid rgba(0, 240, 255, 0.3)',
+                            marginBottom: '16px'
                         }}
                     >
-                        EASY POS
-                    </h1>
+                        <h1
+                            className="text-primary animate-glow"
+                            style={{
+                                marginBottom: '0',
+                                fontSize: '2.5rem',
+                                fontWeight: '800',
+                                background: 'linear-gradient(135deg, var(--color-accent), var(--color-primary))',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                letterSpacing: '2px'
+                            }}
+                        >
+                            EASY POS
+                        </h1>
+                    </div>
+                    <p className="text-muted" style={{ fontSize: '1.1rem', fontWeight: '500' }}>
+                        Automotive Shop Management System
+                    </p>
                 </div>
-                <p className="text-muted" style={{ fontSize: '1.1rem', fontWeight: '500' }}>
-                    Automotive Shop Management System
-                </p>
-            </div>
 
-            {/* Auth Form Container */}
-            <div
-                className="glass-panel w-full animate-scale-in hover-lift"
-                style={{
-                    maxWidth: '480px',
-                    padding: '40px',
-                    position: 'relative',
-                    zIndex: 1,
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 240, 255, 0.1)'
-                }}
-            >
-                <Outlet />
-            </div>
+                {/* Auth Form Container */}
+                <div
+                    className="glass-panel w-full animate-scale-in hover-lift"
+                    style={{
+                        maxWidth: '480px',
+                        padding: '40px',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 240, 255, 0.1)'
+                    }}
+                >
+                    <Outlet />
+                </div>
 
-            {/* Footer */}
-            <div
-                className="mt-6 text-center text-sm text-muted animate-fade-in"
-                style={{ position: 'relative', zIndex: 1 }}
-            >
-                <p>© 2024 Easy POS. All rights reserved.</p>
+                {/* Footer */}
+                <div
+                    className="mt-6 text-center text-sm text-muted animate-fade-in"
+                >
+                    <p>© 2024 Easy POS. All rights reserved.</p>
+                </div>
             </div>
         </div>
     );
