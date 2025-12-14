@@ -1,53 +1,75 @@
 /* Button Styles */
-/* Note: Basic .btn is in global.css, here we define variants */
+/* Note: Basic .btn structure is in global.css */
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--text-main);
     border: 1px solid var(--border-glass);
+    backdrop-filter: blur(10px);
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .btn-danger {
     background: linear-gradient(135deg, #ff0055, #ff4400);
     color: white;
-    box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+    border: none;
 }
 
 .btn-danger:hover:not(:disabled) {
-    box-shadow: 0 0 20px rgba(255, 0, 85, 0.5);
+    box-shadow: 0 0 25px rgba(255, 0, 85, 0.5);
     transform: translateY(-2px);
 }
 
 .btn-sm {
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: 6px 14px;
     font-size: 0.85rem;
+    border-radius: var(--radius-sm);
 }
 
 .btn-lg {
-    padding: var(--spacing-md) var(--spacing-xl);
+    padding: 16px 32px;
     font-size: 1.1rem;
+    border-radius: var(--radius-lg);
 }
 
-/* Card Styles - Glassmorphism override */
+/* Card Styles - Enhanced Glassmorphism */
 .card {
     background: var(--bg-panel);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        box-shadow 0.4s ease,
+        border-color 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+    pointer-events: none;
 }
 
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 240, 255, 0.1);
+    border-color: rgba(0, 240, 255, 0.2);
 }
 
 .card-header {
@@ -57,6 +79,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    z-index: 1;
 }
 
 .card-title {
@@ -66,10 +90,13 @@
     color: var(--color-primary);
     text-transform: uppercase;
     letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
 }
 
 .card-body {
     padding: var(--spacing-sm) 0;
+    position: relative;
+    z-index: 1;
 }
 
 /* Form Styles */
@@ -77,21 +104,23 @@
     margin-bottom: var(--spacing-md);
 }
 
-/* Table Styles - Deep Space */
+/* Table Styles - Deep Space Premium */
 .table-container {
     overflow-x: auto;
-    background: var(--bg-panel);
+    background: rgba(10, 15, 30, 0.4);
     border: 1px solid var(--border-glass);
     border-radius: var(--radius-lg);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 .table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
 .table thead {
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .table th {
@@ -101,18 +130,24 @@
     color: var(--color-primary);
     border-bottom: 1px solid var(--border-glass);
     text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.5px;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    white-space: nowrap;
 }
 
 .table td {
     padding: var(--spacing-md);
     color: var(--text-main);
     border-bottom: 1px solid var(--border-glass);
+    transition: background-color 0.2s;
+}
+
+.table tbody tr {
+    transition: background-color 0.2s;
 }
 
 .table tbody tr:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(0, 240, 255, 0.05);
 }
 
 .table tbody tr:last-child td {
@@ -127,10 +162,10 @@
     padding: var(--spacing-lg);
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(20px);
 }
 
-.stats-card::before {
+.stats-card::after {
     content: '';
     position: absolute;
     top: 0;
@@ -138,6 +173,7 @@
     width: 100%;
     height: 4px;
     background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    box-shadow: 0 0 10px var(--color-primary);
 }
 
 .stats-card-title {
@@ -146,47 +182,58 @@
     margin-bottom: var(--spacing-xs);
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: 600;
 }
 
 .stats-card-value {
     font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0;
+    font-weight: 800;
+    margin: var(--spacing-xs) 0;
     background: linear-gradient(to right, #fff, var(--color-primary));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(0, 240, 255, 0.3));
+    line-height: 1.2;
 }
 
 .stats-card-change {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     margin-top: var(--spacing-sm);
     color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-/* Modal Styles */
+/* Modal Styles - Enhanced */
 .modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    padding: var(--spacing-md);
+    animation: fadeIn 0.3s ease-out;
 }
 
 .modal {
     background: #0B0D17;
     border: 1px solid var(--color-primary);
-    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 50px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(0, 0, 0, 0.5);
     border-radius: var(--radius-lg);
-    max-width: 500px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
+    width: 100%;
+    max-width: 550px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
 }
 
 .modal-header {
@@ -195,29 +242,50 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .modal-title {
     font-size: 1.5rem;
-    color: var(--text-main);
+    color: var(--color-primary);
     margin: 0;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
 }
 
 .modal-close {
-    background: none;
+    background: transparent;
     border: none;
     color: var(--text-muted);
     font-size: 1.5rem;
     cursor: pointer;
-    transition: color 0.3s;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s;
 }
 
 .modal-close:hover {
     color: var(--color-danger);
+    background: rgba(255, 0, 85, 0.1);
+    transform: rotate(90deg);
 }
 
 .modal-body {
     padding: var(--spacing-lg);
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Custom Scrollbar for Modal Body */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .modal-footer {
@@ -226,31 +294,39 @@
     display: flex;
     justify-content: flex-end;
     gap: var(--spacing-md);
+    background: rgba(0, 0, 0, 0.2);
 }
 
 /* Badges */
 .badge {
-    padding: 2px 8px;
-    border-radius: 12px;
+    padding: 4px 10px;
+    border-radius: 50px;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .badge-success {
-    background: rgba(0, 255, 157, 0.15);
+    background: rgba(0, 255, 157, 0.1);
     color: #00FF9D;
     border: 1px solid rgba(0, 255, 157, 0.3);
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.1);
 }
 
 .badge-danger {
-    background: rgba(255, 0, 85, 0.15);
+    background: rgba(255, 0, 85, 0.1);
     color: #FF0055;
     border: 1px solid rgba(255, 0, 85, 0.3);
+    box-shadow: 0 0 10px rgba(255, 0, 85, 0.1);
 }
 
 .badge-warning {
-    background: rgba(255, 184, 0, 0.15);
+    background: rgba(255, 184, 0, 0.1);
     color: #FFB800;
     border: 1px solid rgba(255, 184, 0, 0.3);
+    box-shadow: 0 0 10px rgba(255, 184, 0, 0.1);
 }
