@@ -2,20 +2,19 @@ import React, { useState } from 'react';
 import ProductGrid from '../components/pos/ProductGrid';
 import Cart from '../components/pos/Cart';
 import Checkout from '../components/pos/Checkout';
+import ReceiptModal from '../components/pos/ReceiptModal';
 
 const POS = () => {
     const [showCheckout, setShowCheckout] = useState(false);
-    const [lastOrder, setLastOrder] = useState(null);
+    const [completedOrder, setCompletedOrder] = useState(null);
 
     const handleCheckoutComplete = (order) => {
-        setLastOrder(order);
+        setCompletedOrder(order);
         setShowCheckout(false);
-        // Could show a success modal or receipt here
-        alert('Order completed successfully! ID: ' + order.id);
     };
 
     return (
-        <div className="flex flex-col md:flex-row h-[calc(100vh-6rem)] gap-4">
+        <div className="flex flex-col md:flex-row h-[calc(100vh-6rem)] gap-4 p-2 md:p-4 animate-fade-in">
             <div className="flex-1 min-w-0">
                 <ProductGrid />
             </div>
@@ -28,6 +27,13 @@ const POS = () => {
                 <Checkout
                     onClose={() => setShowCheckout(false)}
                     onComplete={handleCheckoutComplete}
+                />
+            )}
+
+            {completedOrder && (
+                <ReceiptModal
+                    order={completedOrder}
+                    onClose={() => setCompletedOrder(null)}
                 />
             )}
         </div>

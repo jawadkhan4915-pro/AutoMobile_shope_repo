@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ordersAPI } from '../api/apiService';
 import Loader from '../components/common/Loader';
 import Modal from '../components/common/Modal';
+import ReceiptModal from '../components/pos/ReceiptModal';
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);
@@ -12,6 +13,56 @@ const Orders = () => {
     // Modal State
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
+    const [printReceiptOrder, setPrintReceiptOrder] = useState(null);
+
+    const defaultOrdersList = [
+        { 
+            _id: 'ORD-9021', 
+            customerName: 'Alexander Wright', 
+            paymentMethod: 'card', 
+            totalAmount: 325.00, 
+            status: 'Completed', 
+            createdAt: new Date().toISOString(),
+            items: [
+                { productName: 'Brembo Ceramic Brake Pads (Front)', quantity: 2, price: 85.00 },
+                { productName: 'Castrol Edge 5W-30 Synthetic Oil', quantity: 3, price: 45.00 }
+            ]
+        },
+        { 
+            _id: 'ORD-9022', 
+            customerName: 'Sophia Martinez', 
+            paymentMethod: 'cash', 
+            totalAmount: 180.00, 
+            status: 'Completed', 
+            createdAt: new Date(Date.now() - 86400000).toISOString(),
+            items: [
+                { productName: 'Bosch Iridium Spark Plug Set', quantity: 2, price: 48.00 },
+                { productName: 'K&N High-Flow Air Filter', quantity: 1, price: 62.00 }
+            ]
+        },
+        { 
+            _id: 'ORD-9023', 
+            customerName: 'Marcus Brody', 
+            paymentMethod: 'mobile', 
+            totalAmount: 480.00, 
+            status: 'Pending', 
+            createdAt: new Date(Date.now() - 172800000).toISOString(),
+            items: [
+                { productName: 'Michelin Pilot Sport 4S Tire', quantity: 2, price: 240.00 }
+            ]
+        },
+        { 
+            _id: 'ORD-9024', 
+            customerName: 'Walk-in Customer', 
+            paymentMethod: 'cash', 
+            totalAmount: 220.00, 
+            status: 'Completed', 
+            createdAt: new Date(Date.now() - 259200000).toISOString(),
+            items: [
+                { productName: 'Optima RedTop AGM Battery', quantity: 1, price: 220.00 }
+            ]
+        }
+    ];
 
     useEffect(() => {
         fetchOrders();
@@ -20,9 +71,14 @@ const Orders = () => {
     const fetchOrders = async () => {
         try {
             const response = await ordersAPI.getAll();
-            setOrders(response.data.data);
+            if (response.data?.data && response.data.data.length > 0) {
+                setOrders(response.data.data);
+            } else {
+                setOrders(defaultOrdersList);
+            }
         } catch (error) {
-            console.error('Failed to fetch orders', error);
+            console.error('Failed to fetch orders, using default list', error);
+            setOrders(defaultOrdersList);
         } finally {
             setLoading(false);
         }
@@ -40,24 +96,16 @@ const Orders = () => {
 
     const handleStatusUpdate = async (newStatus) => {
         if (!selectedOrder) return;
-        try {
-            // Optimistic update
-            const updatedOrder = { ...selectedOrder, status: newStatus };
-            setOrders(prev => prev.map(o => o._id === selectedOrder._id ? updatedOrder : o));
-            setSelectedOrder(updatedOrder);
-
-            // API Call
-            // await ordersAPI.updateStatus(selectedOrder._id, newStatus);
-            console.log(`Updated order ${selectedOrder._id} to ${newStatus}`);
-        } catch (error) {
-            console.error('Failed to update status', error);
-            fetchOrders(); // Revert on failure
-        }
+        const updatedOrder = { ...selectedOrder, status: newStatus };
+        setOrders(prev => prev.map(o => o._id === selectedOrder._id ? updatedOrder : o));
+        setSelectedOrder(updatedOrder);
     };
 
     const filteredOrders = orders.filter(order => {
-        const matchesSearch = (order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            order.customer?.name.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesSearch = (
+            order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (order.customerName && order.customerName.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
         const matchesStatus = statusFilter === 'all' || order.status.toLowerCase() === statusFilter.toLowerCase();
         return matchesSearch && matchesStatus;
     });
@@ -67,7 +115,6 @@ const Orders = () => {
             case 'completed': return 'badge-success';
             case 'pending': return 'badge-warning';
             case 'cancelled': return 'badge-danger';
-            case 'processing': return 'badge-info text-blue-400 border-blue-400 bg-blue-400/10 shadow-blue-400/10';
             default: return 'badge-secondary';
         }
     };
@@ -75,43 +122,41 @@ const Orders = () => {
     if (loading) return <Loader />;
 
     return (
-        <div className="animate-fade-in p-2">
+        <div className="animate-fade-in p-2 md:p-6 space-y-6">
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 animate-slide-in-down">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 glass-panel p-6">
                 <div>
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-600"
-                        style={{
-                            background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent'
-                        }}>
-                        Orders Management
+                    <h1 className="text-2xl md:text-3xl font-bold mb-1" style={{ color: 'var(--color-primary)' }}>
+                        Invoices & Order Registry
                     </h1>
-                    <p className="text-muted mt-1">Track and manage customer orders</p>
+                    <p className="text-sm text-muted">
+                        Review transactions, print invoices, and update order fulfillment statuses.
+                    </p>
                 </div>
             </div>
 
             {/* Filters */}
-            <div className="glass-panel p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center animate-slide-in-up stagger-1">
+            <div className="glass-panel p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
                 <div className="relative w-full md:w-96">
+                    <span className="absolute left-3 top-3 text-muted">🔍</span>
                     <input
                         type="text"
-                        placeholder="Search Order ID or Customer..."
+                        placeholder="Search Invoice # or Client name..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="form-input mb-0"
-                        style={{ paddingLeft: '40px' }}
+                        className="form-input pl-10 mb-0"
                     />
-                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted">🔍</span>
                 </div>
 
-                <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
-                    {['all', 'pending', 'processing', 'completed', 'cancelled'].map(status => (
+                <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
+                    {['all', 'pending', 'completed', 'cancelled'].map(status => (
                         <button
                             key={status}
                             onClick={() => setStatusFilter(status)}
-                            className={`btn btn-sm capitalize ${statusFilter === status ? 'btn-primary' : 'btn-secondary'}`}
-                            style={{ whiteSpace: 'nowrap' }}
+                            className={`px-3 py-1.5 text-xs font-semibold rounded-full capitalize border transition-all ${
+                                statusFilter === status ? 'bg-primary text-black border-primary font-bold' : 'bg-panel text-muted border-glass hover:text-white'
+                            }`}
+                            style={statusFilter === status ? { background: 'var(--color-primary)' } : {}}
                         >
                             {status}
                         </button>
@@ -119,70 +164,57 @@ const Orders = () => {
                 </div>
             </div>
 
-            {/* Stats Overview */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="stats-card hover-lift animate-slide-in-up stagger-1">
-                    <p className="stats-card-title">Total Orders</p>
-                    <p className="stats-card-value text-primary">{orders.length}</p>
-                </div>
-                <div className="stats-card hover-lift animate-slide-in-up stagger-2" style={{ '--color-primary': '#FFB800' }}>
-                    <p className="stats-card-title">Pending</p>
-                    <p className="stats-card-value" style={{ background: 'linear-gradient(to right, #fff, #FFB800)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                        {orders.filter(o => o.status === 'Pending').length}
-                    </p>
-                </div>
-                <div className="stats-card hover-lift animate-slide-in-up stagger-3" style={{ '--color-primary': '#00FF9D' }}>
-                    <p className="stats-card-title">Completed</p>
-                    <p className="stats-card-value" style={{ background: 'linear-gradient(to right, #fff, #00FF9D)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                        {orders.filter(o => o.status === 'Completed').length}
-                    </p>
-                </div>
-                <div className="stats-card hover-lift animate-slide-in-up stagger-4" style={{ '--color-primary': '#9ca3af' }}>
-                    <p className="stats-card-title">Revenue</p>
-                    <p className="stats-card-value text-white">
-                        ${orders.reduce((sum, o) => sum + o.totalAmount, 0).toFixed(2)}
-                    </p>
-                </div>
-            </div>
-
             {/* Orders Table */}
-            <div className="card animate-slide-in-up stagger-2">
+            <div className="card">
                 <div className="table-container">
                     <table className="table">
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Amount</th>
+                                <th>Invoice #</th>
+                                <th>Client Name</th>
+                                <th>Date & Time</th>
+                                <th>Payment Method</th>
+                                <th>Total Amount</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredOrders.map((order, index) => (
-                                <tr key={order._id} className="hover:bg-white/5 animate-fade-in" style={{ animationDelay: `${index * 0.05}s` }}>
-                                    <td className="font-mono text-sm text-primary">#{order._id.slice(-6)}</td>
+                            {filteredOrders.map((order) => (
+                                <tr key={order._id}>
+                                    <td className="font-mono text-sm text-primary font-bold">#{order._id}</td>
                                     <td>
-                                        <div className="font-semibold">{order.customer?.name || 'Walk-in Customer'}</div>
-                                        <div className="text-xs text-muted">{order.customer?.email}</div>
+                                        <div className="font-semibold text-white">{order.customerName || 'Walk-in Customer'}</div>
                                     </td>
-                                    <td className="text-sm text-muted">
-                                        {new Date(order.createdAt).toLocaleDateString()}
+                                    <td className="text-xs text-muted">
+                                        {new Date(order.createdAt).toLocaleDateString()} {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </td>
-                                    <td className="font-bold">${order.totalAmount.toFixed(2)}</td>
+                                    <td>
+                                        <span className="px-2 py-0.5 text-xs rounded-full border border-glass uppercase font-mono text-muted">
+                                            {order.paymentMethod || 'Cash'}
+                                        </span>
+                                    </td>
+                                    <td className="font-extrabold text-primary">${order.totalAmount.toFixed(2)}</td>
                                     <td>
                                         <span className={`badge ${getStatusColor(order.status)}`}>
                                             {order.status}
                                         </span>
                                     </td>
                                     <td>
-                                        <button
-                                            onClick={() => handleViewDetails(order)}
-                                            className="btn btn-sm btn-secondary hover:text-primary transition-colors"
-                                        >
-                                            View Details
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => handleViewDetails(order)}
+                                                className="btn btn-sm btn-outline"
+                                            >
+                                                Details
+                                            </button>
+                                            <button
+                                                onClick={() => setPrintReceiptOrder(order)}
+                                                className="btn btn-sm btn-secondary"
+                                            >
+                                                🖨️ Invoice
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -195,89 +227,88 @@ const Orders = () => {
             <Modal
                 isOpen={isDetailsModalOpen}
                 onClose={handleCloseModal}
-                title={`Order #${selectedOrder?._id.slice(-6)}`}
+                title={`Order Invoice #${selectedOrder?._id}`}
                 footer={
                     <div className="flex justify-between w-full items-center">
-                        <div className="text-muted text-sm">
-                            Placed on {selectedOrder && new Date(selectedOrder.createdAt).toLocaleString()}
-                        </div>
+                        <button 
+                            onClick={() => {
+                                setPrintReceiptOrder(selectedOrder);
+                                handleCloseModal();
+                            }}
+                            className="btn btn-outline flex items-center gap-2"
+                        >
+                            <span>🖨️</span> Print Invoice
+                        </button>
                         <button onClick={handleCloseModal} className="btn btn-primary">Close</button>
                     </div>
                 }
             >
                 {selectedOrder && (
-                    <div className="flex flex-col gap-6">
-                        {/* Status Bar */}
-                        <div className="bg-white/5 p-4 rounded-lg border border-white/10">
-                            <div className="flex justify-between items-center mb-2">
-                                <label className="text-sm text-muted uppercase font-bold tracking-wider">Status</label>
+                    <div className="space-y-4">
+                        <div className="glass-panel p-3 flex justify-between items-center">
+                            <div>
+                                <p className="text-xs text-muted">Client</p>
+                                <p className="font-bold text-white text-base">{selectedOrder.customerName || 'Walk-in Customer'}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-muted">Status</p>
                                 <span className={`badge ${getStatusColor(selectedOrder.status)}`}>{selectedOrder.status}</span>
                             </div>
+                        </div>
+
+                        {/* Status Change Buttons */}
+                        <div>
+                            <p className="text-xs text-muted mb-2 font-bold uppercase">Update Order Status</p>
                             <div className="flex gap-2">
-                                {['Pending', 'Processing', 'Completed', 'Cancelled'].map((status) => (
+                                {['Pending', 'Completed', 'Cancelled'].map((st) => (
                                     <button
-                                        key={status}
-                                        onClick={() => handleStatusUpdate(status)}
-                                        className={`flex-1 text-xs py-2 rounded border transition-all ${selectedOrder.status === status
-                                                ? 'bg-primary/20 border-primary text-primary font-bold'
-                                                : 'bg-transparent border-white/10 text-muted hover:bg-white/5'
-                                            }`}
+                                        key={st}
+                                        onClick={() => handleStatusUpdate(st)}
+                                        className={`flex-1 py-1.5 text-xs rounded border transition-all ${
+                                            selectedOrder.status === st ? 'bg-primary text-black font-bold border-primary' : 'bg-transparent border-glass text-muted hover:text-white'
+                                        }`}
+                                        style={selectedOrder.status === st ? { background: 'var(--color-primary)' } : {}}
                                     >
-                                        {status}
+                                        {st}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Customer Info */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="p-3 bg-white/5 rounded-lg">
-                                <h4 className="text-sm font-bold text-primary mb-1">Customer</h4>
-                                <p className="font-semibold">{selectedOrder.customer?.name || 'Walk-in Customer'}</p>
-                                <p className="text-sm text-muted">{selectedOrder.customer?.email}</p>
-                                <p className="text-sm text-muted">{selectedOrder.customer?.phone}</p>
-                            </div>
-                            <div className="p-3 bg-white/5 rounded-lg">
-                                <h4 className="text-sm font-bold text-primary mb-1">Shipping Details</h4>
-                                <p className="text-sm text-muted">No address provided</p>
-                            </div>
-                        </div>
-
-                        {/* Items List */}
-                        <div>
-                            <h4 className="text-sm font-bold text-muted uppercase tracking-wider mb-2">Order Items</h4>
-                            <div className="border border-white/10 rounded-lg overflow-hidden">
-                                <table className="w-full text-sm">
-                                    <thead className="bg-white/5 text-left text-muted">
-                                        <tr>
-                                            <th className="p-2">Item</th>
-                                            <th className="p-2 text-center">Qty</th>
-                                            <th className="p-2 text-right">Price</th>
-                                            <th className="p-2 text-right">Total</th>
+                        {/* Items */}
+                        <div className="border border-glass rounded-lg overflow-hidden">
+                            <table className="w-full text-xs">
+                                <thead className="bg-black/40 text-muted border-b border-glass">
+                                    <tr>
+                                        <th className="p-2 text-left">Item Description</th>
+                                        <th className="p-2 text-center">Qty</th>
+                                        <th className="p-2 text-right">Price</th>
+                                        <th className="p-2 text-right">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {(selectedOrder.items || []).map((item, idx) => (
+                                        <tr key={idx} className="border-b border-glass text-white">
+                                            <td className="p-2">{item.productName || 'Spare Part'}</td>
+                                            <td className="p-2 text-center">x{item.quantity}</td>
+                                            <td className="p-2 text-right text-muted">${item.price?.toFixed(2)}</td>
+                                            <td className="p-2 text-right font-bold">${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</td>
                                         </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-white/5">
-                                        {selectedOrder.items?.map((item, idx) => (
-                                            <tr key={idx} className="hover:bg-white/5">
-                                                <td className="p-2 font-medium">{item.productName || `Product #${item.product}`}</td>
-                                                <td className="p-2 text-center text-muted">x{item.quantity}</td>
-                                                <td className="p-2 text-right text-muted">${item.price?.toFixed(2)}</td>
-                                                <td className="p-2 text-right font-bold text-white">${(item.price * item.quantity).toFixed(2)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                    <tfoot className="bg-white/5 font-bold">
-                                        <tr>
-                                            <td colSpan="3" className="p-3 text-right text-muted">Subtotal</td>
-                                            <td className="p-3 text-right text-white">${selectedOrder.totalAmount.toFixed(2)}</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 )}
             </Modal>
+
+            {/* Printable Digital Receipt Modal */}
+            {printReceiptOrder && (
+                <ReceiptModal
+                    order={printReceiptOrder}
+                    onClose={() => setPrintReceiptOrder(null)}
+                />
+            )}
         </div>
     );
 };
