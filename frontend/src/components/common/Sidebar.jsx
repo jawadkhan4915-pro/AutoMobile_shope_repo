@@ -6,122 +6,210 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
     const { isAdmin, user } = useAuth();
 
     const navItems = [
-        { name: 'Dashboard', path: '/', icon: '📊' },
-        { name: 'POS Terminal', path: '/pos', icon: '🛒', badge: 'Live' },
-        { name: 'Auto Parts & Stock', path: '/products', icon: '📦' },
-        { name: 'Customer Profiles', path: '/customers', icon: '👥' },
-        { name: 'Invoices & Orders', path: '/orders', icon: '📝' },
-        { name: 'Analytics & Reports', path: '/reports', icon: '📈' },
-        { name: 'System Settings', path: '/settings', icon: '⚙️' },
+        { name: 'Dashboard', path: '/', icon: '📊', section: 'main' },
+        { name: 'POS Terminal', path: '/pos', icon: '🛒', badge: 'Live', section: 'main' },
+        { name: 'Auto Parts & Stock', path: '/products', icon: '📦', section: 'inventory' },
+        { name: 'Customer Profiles', path: '/customers', icon: '👥', section: 'crm' },
+        { name: 'Invoices & Orders', path: '/orders', icon: '📝', section: 'sales' },
+        { name: 'Analytics & Reports', path: '/reports', icon: '📈', section: 'analytics' },
+        { name: 'System Settings', path: '/settings', icon: '⚙️', section: 'settings' },
     ];
+
+    const sections = {
+        main: 'Operations',
+        inventory: 'Inventory',
+        crm: 'CRM',
+        sales: 'Sales',
+        analytics: 'Intelligence',
+        settings: 'Configuration'
+    };
+
+    let lastSection = '';
 
     return (
         <>
             {/* Mobile Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/80 z-40 md:hidden animate-fade-in"
+                    className="fixed inset-0 z-40 md:hidden animate-fade-in"
                     onClick={closeSidebar}
-                    style={{ backdropFilter: 'blur(8px)' }}
-                ></div>
+                    style={{
+                        background: 'rgba(0, 0, 0, 0.6)',
+                        backdropFilter: 'blur(4px)'
+                    }}
+                />
             )}
 
             <aside
-                className={`fixed inset-y-0 left-0 z-50 w-72 transform transition-all duration-300 ease-in-out md:translate-x-0 md:static md:h-screen ${
+                className={`fixed inset-y-0 left-0 z-50 w-[260px] transform transition-transform duration-300 ease-out md:translate-x-0 md:static md:h-screen ${
                     isOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
                 style={{
-                    background: 'linear-gradient(180deg, #0B0D17 0%, #16192b 100%)',
-                    borderRight: '1px solid rgba(0, 240, 255, 0.15)',
-                    boxShadow: '4px 0 25px rgba(0, 0, 0, 0.4)'
+                    background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+                    borderRight: '1px solid var(--border-subtle)',
                 }}
             >
                 {/* Brand Header */}
-                <div className="h-20 flex items-center px-6 border-b border-glass bg-black/30">
+                <div style={{
+                    padding: '20px 20px 16px',
+                    borderBottom: '1px solid var(--border-subtle)',
+                }}>
                     <div className="flex items-center gap-3">
-                        <div 
-                            className="w-10 h-10 rounded-xl flex items-center justify-center font-extrabold text-xl text-black shadow-lg"
-                            style={{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))' }}
+                        <div
+                            style={{
+                                width: 38,
+                                height: 38,
+                                borderRadius: 10,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: 20,
+                                background: 'linear-gradient(135deg, var(--color-primary-deep), var(--color-accent-deep))',
+                                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
+                            }}
                         >
                             🏎️
                         </div>
                         <div>
-                            <h1
-                                className="text-lg font-extrabold tracking-wider"
-                                style={{
-                                    background: 'linear-gradient(135deg, #00F0FF, #7000FF)',
-                                    WebkitBackgroundClip: 'text',
-                                    WebkitTextFillColor: 'transparent',
-                                }}
-                            >
-                                APEX MOTORWORKS
+                            <h1 style={{
+                                fontSize: '0.9375rem',
+                                fontWeight: 800,
+                                letterSpacing: '0.04em',
+                                color: '#fff',
+                                margin: 0,
+                                lineHeight: 1.2,
+                            }}>
+                                APEX MOTORS
                             </h1>
-                            <p className="text-[10px] text-muted uppercase tracking-widest font-bold">Auto POS & Inventory</p>
+                            <p style={{
+                                fontSize: '0.625rem',
+                                color: 'var(--text-muted)',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.12em',
+                                fontWeight: 600,
+                                margin: 0,
+                            }}>
+                                POS & Inventory Suite
+                            </p>
                         </div>
                     </div>
                 </div>
 
-                {/* User Profile Badge */}
-                <div className="px-4 py-4 border-b border-glass bg-white/5">
+                {/* User Badge */}
+                <div style={{
+                    padding: '14px 20px',
+                    borderBottom: '1px solid var(--border-subtle)',
+                    background: 'rgba(99, 102, 241, 0.04)',
+                }}>
                     <div className="flex items-center gap-3">
-                        <div
-                            className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-base text-black"
-                            style={{
-                                background: 'linear-gradient(135deg, var(--color-accent), var(--color-primary))',
-                                boxShadow: '0 0 12px rgba(0, 240, 255, 0.3)'
-                            }}
-                        >
+                        <div style={{
+                            width: 34,
+                            height: 34,
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 700,
+                            fontSize: '0.8125rem',
+                            color: '#fff',
+                            background: 'linear-gradient(135deg, var(--color-primary-deep), var(--color-accent-deep))',
+                        }}>
                             {user?.name?.charAt(0)?.toUpperCase() || 'A'}
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="font-bold text-sm truncate text-white">
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                            <p style={{ fontWeight: 600, fontSize: '0.8125rem', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {user?.name || 'Administrator'}
                             </p>
-                            <p className="text-xs text-muted truncate">
-                                {user?.email || 'admin@apexmotorworks.com'}
+                            <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {user?.email || 'admin@apex.com'}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {/* Navigation Menu */}
-                <nav className="mt-4 px-3 space-y-1.5 overflow-y-auto" style={{ height: 'calc(100vh - 220px)' }}>
-                    {navItems.map((item) => (
-                        <NavLink
-                            key={item.path}
-                            to={item.path}
-                            className={({ isActive }) =>
-                                `flex items-center px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 group ${
-                                    isActive
-                                        ? 'bg-primary/20 border border-primary text-primary shadow-lg'
-                                        : 'text-muted hover:text-white hover:bg-white/5'
-                                }`
-                            }
-                            style={({ isActive }) =>
-                                isActive
-                                    ? {
-                                          background: 'linear-gradient(135deg, rgba(112, 0, 255, 0.2), rgba(0, 240, 255, 0.2))',
-                                          borderColor: 'var(--color-primary)',
-                                          color: 'var(--color-primary)',
-                                      }
-                                    : {}
-                            }
-                            onClick={() => window.innerWidth < 768 && closeSidebar()}
-                        >
-                            <span className="mr-3 text-lg group-hover:scale-110 transition-transform">{item.icon}</span>
-                            <span className="flex-1">{item.name}</span>
-                            {item.badge && (
-                                <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-primary/20 text-primary border border-primary/40">
-                                    {item.badge}
-                                </span>
-                            )}
-                        </NavLink>
-                    ))}
+                {/* Navigation */}
+                <nav style={{
+                    padding: '12px 12px',
+                    overflowY: 'auto',
+                    height: 'calc(100vh - 190px)',
+                }}>
+                    {navItems.map((item) => {
+                        const showSection = item.section !== lastSection;
+                        lastSection = item.section;
+
+                        return (
+                            <React.Fragment key={item.path}>
+                                {showSection && (
+                                    <p style={{
+                                        fontSize: '0.625rem',
+                                        fontWeight: 700,
+                                        color: 'var(--text-muted)',
+                                        textTransform: 'uppercase',
+                                        letterSpacing: '0.1em',
+                                        padding: '16px 12px 6px',
+                                        marginTop: item.section === 'main' ? 0 : 4,
+                                    }}>
+                                        {sections[item.section]}
+                                    </p>
+                                )}
+                                <NavLink
+                                    to={item.path}
+                                    className={({ isActive }) =>
+                                        `nav-link-item ${isActive ? 'nav-active' : ''}`
+                                    }
+                                    onClick={() => window.innerWidth < 768 && closeSidebar()}
+                                    style={({ isActive }) => ({
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        padding: '9px 12px',
+                                        fontSize: '0.8125rem',
+                                        fontWeight: 500,
+                                        borderRadius: 8,
+                                        marginBottom: 2,
+                                        color: isActive ? 'var(--color-primary-bright)' : 'var(--text-secondary)',
+                                        background: isActive ? 'rgba(99, 102, 241, 0.12)' : 'transparent',
+                                        borderLeft: isActive ? '3px solid var(--color-primary)' : '3px solid transparent',
+                                        textDecoration: 'none',
+                                        transition: 'all 0.2s ease',
+                                    })}
+                                >
+                                    <span style={{ marginRight: 10, fontSize: '1rem', display: 'inline-flex' }}>{item.icon}</span>
+                                    <span style={{ flex: 1 }}>{item.name}</span>
+                                    {item.badge && (
+                                        <span style={{
+                                            padding: '2px 8px',
+                                            fontSize: '0.5625rem',
+                                            fontWeight: 700,
+                                            borderRadius: 999,
+                                            background: 'var(--color-success-bg)',
+                                            color: 'var(--color-success)',
+                                            border: '1px solid rgba(52, 211, 153, 0.3)',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.05em',
+                                        }}>
+                                            {item.badge}
+                                        </span>
+                                    )}
+                                </NavLink>
+                            </React.Fragment>
+                        );
+                    })}
                 </nav>
 
-                {/* Footer Info */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-glass text-center bg-black/40 text-xs text-muted">
-                    <p>© 2026 Apex MotorWorks v2.5</p>
+                {/* Footer */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    padding: '12px 20px',
+                    borderTop: '1px solid var(--border-subtle)',
+                    textAlign: 'center',
+                    fontSize: '0.625rem',
+                    color: 'var(--text-muted)',
+                    fontWeight: 500,
+                }}>
+                    © 2026 Apex MotorWorks v3.0
                 </div>
             </aside>
         </>

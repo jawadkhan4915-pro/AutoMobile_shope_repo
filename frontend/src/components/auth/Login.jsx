@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Car, Mail, Lock, AlertCircle, ChevronRight, Sparkles, Eye, EyeOff } from 'lucide-react';
 
 const demoDepartments = {
   All: [
-    { role: 'Admin', name: 'Demo Shop Admin', email: 'admin@admin.com', pass: 'pass@123', color: 'amber', icon: '🛡️' },
-    { role: 'Cashier', name: 'Demo Cashier', email: 'cashier@cashier.com', pass: 'pass@123', color: 'indigo', icon: '🛒' },
-    { role: 'Manager', name: 'Inventory Manager', email: 'manager@apex.com', pass: 'pass@123', color: 'emerald', icon: '👔' },
-    { role: 'Mechanic', name: 'Lead Technician', email: 'tech@apex.com', pass: 'pass@123', color: 'sky', icon: '🔧' },
+    { role: 'Admin', name: 'Demo Shop Admin', email: 'admin@admin.com', pass: 'pass@123', icon: '🛡️' },
+    { role: 'Cashier', name: 'Demo Cashier', email: 'cashier@cashier.com', pass: 'pass@123', icon: '🛒' },
+    { role: 'Manager', name: 'Inventory Manager', email: 'manager@apex.com', pass: 'pass@123', icon: '👔' },
+    { role: 'Mechanic', name: 'Lead Technician', email: 'tech@apex.com', pass: 'pass@123', icon: '🔧' },
   ],
   Sales: [
-    { role: 'Head Cashier', name: 'Senior Cashier', email: 'cashier@cashier.com', pass: 'pass@123', color: 'indigo', icon: '🛒' },
-    { role: 'Sales Lead', name: 'Demo Salesman', email: 'sales@apex.com', pass: 'pass@123', color: 'purple', icon: '🏷️' },
+    { role: 'Head Cashier', name: 'Senior Cashier', email: 'cashier@cashier.com', pass: 'pass@123', icon: '🛒' },
+    { role: 'Sales Lead', name: 'Demo Salesman', email: 'sales@apex.com', pass: 'pass@123', icon: '🏷️' },
   ],
   Admin: [
-    { role: 'Owner / Admin', name: 'Demo Admin', email: 'admin@admin.com', pass: 'pass@123', color: 'amber', icon: '🛡️' },
-    { role: 'IT Support', name: 'System Admin', email: 'sysadmin@apex.com', pass: 'pass@123', color: 'rose', icon: '⚙️' },
+    { role: 'Owner / Admin', name: 'Demo Admin', email: 'admin@admin.com', pass: 'pass@123', icon: '🛡️' },
+    { role: 'IT Support', name: 'System Admin', email: 'sysadmin@apex.com', pass: 'pass@123', icon: '⚙️' },
   ]
 };
 
@@ -27,6 +26,7 @@ const Login = () => {
   const [localError, setLocalError] = useState('');
   const [activeDept, setActiveDept] = useState('All');
   const [loading, setLoading] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -41,216 +41,432 @@ const Login = () => {
     setLoading(true);
     try {
       const result = await login({ email, password });
-      if (result && result.success) {
-        navigate('/');
-      } else {
-        // Smooth demo navigation fallback
-        navigate('/');
-      }
+      if (result && result.success) navigate('/');
+      else navigate('/');
     } catch (err) {
-      console.log('Session initialized:', err);
       navigate('/');
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div className="min-h-screen flex bg-slate-50">
-      {/* Left Panel — Brand (SE_LMS exact style) */}
-      <div className="hidden lg:flex w-[45%] relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 flex-col justify-between p-12 text-white">
-        {/* Abstract circles */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-white/5 rounded-full" />
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-purple-900/40 rounded-full -mr-20 -mb-20" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl" />
+  const features = [
+    'Real-time POS checkout & digital invoices',
+    'Auto parts inventory & stock tracking',
+    'Vehicle fitment & compatibility search',
+    'Smart business intelligence & analytics'
+  ];
 
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 backdrop-blur border border-white/20">
-              <Car className="h-7 w-7 text-white" />
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      background: '#f8fafc',
+    }}>
+      {/* ════════════ LEFT BRAND PANEL ════════════ */}
+      <div className="login-left-panel" style={{
+        width: '45%',
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #7c3aed 100%)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: '48px',
+        color: '#fff',
+      }}>
+        {/* Decorative shapes */}
+        <div style={{
+          position: 'absolute', top: -80, left: -80,
+          width: 320, height: 320,
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.06)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: -60, right: -60,
+          width: 280, height: 280,
+          borderRadius: '50%',
+          background: 'rgba(124, 58, 237, 0.5)',
+        }} />
+        <div style={{
+          position: 'absolute', top: '50%', left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 220, height: 220,
+          borderRadius: '50%',
+          background: 'rgba(99, 102, 241, 0.25)',
+          filter: 'blur(60px)',
+        }} />
+
+        {/* Top content */}
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <div className="flex items-center gap-3" style={{ marginBottom: 48 }}>
+            <div style={{
+              width: 44, height: 44,
+              borderRadius: 14,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(255,255,255,0.12)',
+              backdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              fontSize: '1.5rem',
+            }}>
+              🏎️
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">Apex MotorWorks</h1>
-              <p className="text-indigo-300 text-xs font-medium">Automotive POS Portal</p>
+              <h1 style={{ fontSize: '1.125rem', fontWeight: 800, letterSpacing: '0.02em', margin: 0 }}>
+                Apex MotorWorks
+              </h1>
+              <p style={{ fontSize: '0.6875rem', color: 'rgba(199, 210, 254, 0.9)', fontWeight: 600, margin: 0 }}>
+                Automotive POS Portal
+              </p>
             </div>
           </div>
 
-          <h2 className="text-4xl font-bold leading-tight mb-4">
+          <h2 style={{
+            fontSize: '2.25rem',
+            fontWeight: 800,
+            lineHeight: 1.15,
+            marginBottom: 16,
+            letterSpacing: '-0.03em',
+          }}>
             Automotive Shop &<br />Inventory POS System
           </h2>
-          <p className="text-indigo-200 text-base leading-relaxed max-w-xs">
-            A unified digital platform for automotive shop owners, cashiers, and technicians to manage sales & inventory efficiently.
+          <p style={{
+            fontSize: '0.9375rem',
+            color: 'rgba(199, 210, 254, 0.85)',
+            lineHeight: 1.65,
+            maxWidth: 340,
+          }}>
+            A unified digital platform for automotive shop owners, cashiers, and technicians.
           </p>
         </div>
 
-        {/* Feature points */}
-        <div className="relative z-10 space-y-3">
-          {[
-            'Real-time POS checkout & digital invoices',
-            'Auto parts inventory & stock tracking',
-            'Vehicle fitment & compatibility search',
-            'Smart business intelligence & analytics'
-          ].map(feat => (
-            <div key={feat} className="flex items-center gap-3">
-              <div className="h-5 w-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                <Sparkles className="h-2.5 w-2.5 text-white" />
+        {/* Features */}
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {features.map((feat, i) => (
+              <div key={i} className="flex items-center gap-3" style={{
+                animation: `slideInLeft 0.4s ease ${0.2 + i * 0.08}s both`,
+              }}>
+                <div style={{
+                  width: 22, height: 22,
+                  borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.18)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  fontSize: '0.625rem',
+                }}>
+                  ✦
+                </div>
+                <span style={{ fontSize: '0.8125rem', color: 'rgba(224, 231, 255, 0.9)' }}>
+                  {feat}
+                </span>
               </div>
-              <span className="text-sm text-indigo-100">{feat}</span>
-            </div>
-          ))}
-          <p className="text-indigo-300 text-xs mt-6">© 2026 Apex MotorWorks POS</p>
+            ))}
+          </div>
+          <p style={{ fontSize: '0.6875rem', color: 'rgba(165, 180, 252, 0.6)', marginTop: 28 }}>
+            © 2026 Apex MotorWorks POS
+          </p>
         </div>
       </div>
 
-      {/* Right Panel — Form */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-16">
-        <div className="w-full max-w-md animate-fade-in">
+      {/* ════════════ RIGHT FORM PANEL ════════════ */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px',
+        background: '#f8fafc',
+      }}>
+        <div style={{ width: '100%', maxWidth: 420 }} className="animate-fade-in">
           {/* Mobile logo */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600">
-              <Car className="h-6 w-6 text-white" />
+          <div className="login-mobile-logo flex items-center gap-3" style={{ marginBottom: 32 }}>
+            <div style={{
+              width: 38, height: 38, borderRadius: 10,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: '#6366f1', fontSize: '1.25rem',
+            }}>
+              🏎️
             </div>
             <div>
-              <h1 className="text-lg font-bold text-slate-900">Apex MotorWorks</h1>
-              <p className="text-slate-500 text-xs">Automotive POS Portal</p>
+              <h1 style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Apex MotorWorks</h1>
+              <p style={{ fontSize: '0.6875rem', color: '#94a3b8', margin: 0 }}>Automotive POS Portal</p>
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-slate-900 mb-1">Welcome back</h2>
-          <p className="text-slate-500 text-sm mb-7">Sign in to access your POS terminal</p>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', margin: '0 0 4px', letterSpacing: '-0.025em' }}>
+            Welcome back
+          </h2>
+          <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: 28, fontWeight: 500 }}>
+            Sign in to access your POS terminal
+          </p>
 
-          {/* Error Alert */}
+          {/* Error */}
           {localError && (
-            <div className="mb-5 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 shrink-0 text-rose-500" />
-              <span>{localError}</span>
+            <div style={{
+              marginBottom: 20,
+              padding: '10px 14px',
+              borderRadius: 10,
+              background: 'rgba(248, 113, 113, 0.08)',
+              border: '1px solid rgba(248, 113, 113, 0.2)',
+              color: '#ef4444',
+              fontSize: '0.8125rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}>
+              <span>⚠️</span> {localError}
             </div>
           )}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: 18 }}>
+              <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: '#475569', marginBottom: 6 }}>
+                Email Address
+              </label>
+              <div style={{ position: 'relative' }}>
+                <span style={{
+                  position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
+                  fontSize: '0.875rem', color: focusedField === 'email' ? '#6366f1' : '#94a3b8',
+                  transition: 'color 0.2s',
+                }}>✉️</span>
                 <input
-                  id="login-email"
                   type="email"
                   placeholder="admin@admin.com"
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
+                  style={{
+                    width: '100%',
+                    padding: '11px 14px 11px 42px',
+                    borderRadius: 10,
+                    border: `1.5px solid ${focusedField === 'email' ? '#6366f1' : '#e2e8f0'}`,
+                    background: '#fff',
+                    fontSize: '0.875rem',
+                    color: '#0f172a',
+                    outline: 'none',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                    boxShadow: focusedField === 'email' ? '0 0 0 3px rgba(99, 102, 241, 0.1)' : 'none',
+                  }}
                 />
               </div>
             </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-semibold text-slate-700">Password</label>
-                <Link to="/forgot-password" className="text-xs font-semibold text-indigo-600 hover:text-indigo-700">
+            <div style={{ marginBottom: 22 }}>
+              <div className="flex justify-between items-center" style={{ marginBottom: 6 }}>
+                <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569' }}>Password</label>
+                <Link to="/forgot-password" style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6366f1', textDecoration: 'none' }}>
                   Forgot password?
                 </Link>
               </div>
-              <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <div style={{ position: 'relative' }}>
+                <span style={{
+                  position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)',
+                  fontSize: '0.875rem', color: focusedField === 'password' ? '#6366f1' : '#94a3b8',
+                  transition: 'color 0.2s',
+                }}>🔒</span>
                 <input
-                  id="login-password"
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => setFocusedField('password')}
+                  onBlur={() => setFocusedField(null)}
+                  style={{
+                    width: '100%',
+                    padding: '11px 42px 11px 42px',
+                    borderRadius: 10,
+                    border: `1.5px solid ${focusedField === 'password' ? '#6366f1' : '#e2e8f0'}`,
+                    background: '#fff',
+                    fontSize: '0.875rem',
+                    color: '#0f172a',
+                    outline: 'none',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                    boxShadow: focusedField === 'password' ? '0 0 0 3px rgba(99, 102, 241, 0.1)' : 'none',
+                  }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  style={{
+                    position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    fontSize: '0.875rem', color: '#94a3b8', padding: 4,
+                  }}
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? '🙈' : '👁️'}
                 </button>
               </div>
             </div>
 
             <button
-              id="login-submit"
               type="submit"
               disabled={loading}
-              className="w-full py-3 mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: 10,
+                background: loading ? '#a5b4fc' : 'linear-gradient(135deg, #4f46e5, #6366f1)',
+                color: '#fff',
+                fontSize: '0.875rem',
+                fontWeight: 700,
+                border: 'none',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                transition: 'all 0.2s',
+                boxShadow: '0 2px 8px rgba(99, 102, 241, 0.3)',
+              }}
             >
               {loading ? (
                 <>
-                  <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                  <span>Signing in...</span>
+                  <span style={{
+                    width: 16, height: 16, borderRadius: '50%',
+                    border: '2px solid rgba(255,255,255,0.3)',
+                    borderTopColor: '#fff',
+                    animation: 'spin 0.7s linear infinite',
+                    display: 'inline-block',
+                  }} />
+                  Signing in...
                 </>
               ) : (
-                <>
-                  <span>Sign In</span>
-                  <ChevronRight className="h-4 w-4" />
-                </>
+                <>Sign In <span>→</span></>
               )}
             </button>
           </form>
 
-          {/* Demo Accounts (SE_LMS Exact Style) */}
-          <div className="mt-8 pt-6 border-t border-slate-200">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3.5 text-center">
+          {/* Demo Section */}
+          <div style={{
+            marginTop: 32,
+            paddingTop: 24,
+            borderTop: '1px solid #e2e8f0',
+          }}>
+            <p style={{
+              fontSize: '0.6875rem',
+              fontWeight: 700,
+              color: '#94a3b8',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              textAlign: 'center',
+              marginBottom: 14,
+            }}>
               Quick Demo — Click to Auto-Fill
             </p>
 
-            {/* Department Tabs */}
-            <div className="flex flex-wrap justify-center gap-1.5 mb-4">
+            {/* Dept Tabs */}
+            <div className="flex justify-center" style={{ gap: 6, marginBottom: 14, flexWrap: 'wrap' }}>
               {Object.keys(demoDepartments).map((dept) => (
                 <button
                   key={dept}
                   type="button"
                   onClick={() => setActiveDept(dept)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all border ${
-                    activeDept === dept
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                  }`}
+                  style={{
+                    padding: '5px 14px',
+                    borderRadius: 8,
+                    fontSize: '0.6875rem',
+                    fontWeight: 700,
+                    border: `1.5px solid ${activeDept === dept ? '#6366f1' : '#e2e8f0'}`,
+                    background: activeDept === dept ? '#6366f1' : '#fff',
+                    color: activeDept === dept ? '#fff' : '#64748b',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
                 >
                   {dept}
                 </button>
               ))}
             </div>
 
-            {/* Department-specific Demo Accounts Grid */}
-            <div className="grid grid-cols-2 gap-2">
+            {/* Demo Cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: 8,
+            }}>
               {demoDepartments[activeDept].map((d) => (
                 <button
-                  key={d.email}
+                  key={d.email + d.role}
                   type="button"
                   onClick={() => { setEmail(d.email); setPassword(d.pass); }}
-                  className="flex items-start gap-2.5 p-2.5 bg-white border border-slate-200 rounded-lg hover:border-indigo-400 hover:bg-indigo-50/30 transition-all text-left group cursor-pointer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 10,
+                    padding: '10px 12px',
+                    background: '#fff',
+                    border: '1.5px solid #e2e8f0',
+                    borderRadius: 10,
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#a5b4fc';
+                    e.currentTarget.style.background = 'rgba(99, 102, 241, 0.04)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#e2e8f0';
+                    e.currentTarget.style.background = '#fff';
+                  }}
                 >
-                  <span className="text-xl mt-0.5 leading-none">{d.icon}</span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-1">
-                      <p className="text-xs font-bold text-slate-800">{d.role}</p>
-                      <span className="text-[8px] bg-slate-100 text-slate-600 px-1 rounded font-semibold uppercase">
+                  <span style={{ fontSize: '1.25rem', marginTop: 2 }}>{d.icon}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="flex items-center justify-between" style={{ gap: 4 }}>
+                      <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>{d.role}</p>
+                      <span style={{
+                        fontSize: '0.5rem',
+                        background: '#f1f5f9',
+                        color: '#64748b',
+                        padding: '1px 5px',
+                        borderRadius: 4,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                      }}>
                         {activeDept}
                       </span>
                     </div>
-                    <p className="text-[10px] font-medium text-slate-500 truncate" title={d.name}>
+                    <p style={{ fontSize: '0.625rem', color: '#94a3b8', fontWeight: 500, margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {d.name}
                     </p>
-                    <p className="text-[10px] text-slate-400 truncate">{d.email}</p>
-                    <p className="text-[9px] font-semibold text-indigo-600/90 mt-0.5">pw: {d.pass}</p>
+                    <p style={{ fontSize: '0.625rem', color: '#cbd5e1', margin: '1px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {d.email}
+                    </p>
+                    <p style={{ fontSize: '0.5625rem', fontWeight: 700, color: 'rgba(99, 102, 241, 0.8)', marginTop: 3 }}>
+                      pw: {d.pass}
+                    </p>
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-          <p className="text-center text-sm text-slate-500 mt-6">
+          <p style={{ textAlign: 'center', fontSize: '0.8125rem', color: '#94a3b8', marginTop: 24 }}>
             New employee?{' '}
-            <Link to="/register" className="font-semibold text-indigo-600 hover:text-indigo-700">
+            <Link to="/register" style={{ fontWeight: 700, color: '#6366f1', textDecoration: 'none' }}>
               Register here
             </Link>
           </p>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1024px) {
+          .login-left-panel { display: none !important; }
+          .login-mobile-logo { display: flex !important; }
+        }
+        @media (min-width: 1025px) {
+          .login-mobile-logo { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 };
