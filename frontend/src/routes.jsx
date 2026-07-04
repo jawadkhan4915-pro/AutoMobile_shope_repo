@@ -1,23 +1,33 @@
+import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { useAuth } from './hooks/useAuth';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import Dashboard from './pages/Dashboard';
-import POS from './pages/POS';
-import Products from './pages/Products';
-import Customers from './pages/Customers';
-import Orders from './pages/Orders';
-import Reports from './pages/Reports';
-import Settings from './pages/Settings';
-import MainLayout from './components/layout/MainLayout';
-import AuthLayout from './components/layout/AuthLayout';
+import Loader from './components/common/Loader';
+
+// Lazy load route pages for maximum speed and code-splitting performance
+const Login = lazy(() => import('./components/auth/Login'));
+const Register = lazy(() => import('./components/auth/Register'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const POS = lazy(() => import('./pages/POS'));
+const Products = lazy(() => import('./pages/Products'));
+const Customers = lazy(() => import('./pages/Customers'));
+const Orders = lazy(() => import('./pages/Orders'));
+const Reports = lazy(() => import('./pages/Reports'));
+const Settings = lazy(() => import('./pages/Settings'));
+const MainLayout = lazy(() => import('./components/layout/MainLayout'));
+const AuthLayout = lazy(() => import('./components/layout/AuthLayout'));
+
+const PageFallback = () => (
+    <div className="flex items-center justify-center h-screen w-full bg-[#0B0D17]">
+        <Loader />
+    </div>
+);
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
     const { isAuthenticated, loading } = useAuth();
 
     if (loading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return <PageFallback />;
     }
 
     if (!isAuthenticated) {
@@ -27,12 +37,12 @@ const ProtectedRoute = ({ children }) => {
     return children;
 };
 
-// Public Route Wrapper (redirects to dashboard if already logged in)
+// Public Route Wrapper
 const PublicRoute = ({ children }) => {
     const { isAuthenticated, loading } = useAuth();
 
     if (loading) {
-        return <div className="flex justify-center items-center h-screen">Loading...</div>;
+        return <PageFallback />;
     }
 
     if (isAuthenticated) {
@@ -44,13 +54,19 @@ const PublicRoute = ({ children }) => {
 
 export const router = createBrowserRouter([
     {
-        element: <AuthLayout />,
+        element: (
+            <Suspense fallback={<PageFallback />}>
+                <AuthLayout />
+            </Suspense>
+        ),
         children: [
             {
                 path: '/login',
                 element: (
                     <PublicRoute>
-                        <Login />
+                        <Suspense fallback={<PageFallback />}>
+                            <Login />
+                        </Suspense>
                     </PublicRoute>
                 ),
             },
@@ -58,7 +74,9 @@ export const router = createBrowserRouter([
                 path: '/register',
                 element: (
                     <PublicRoute>
-                        <Register />
+                        <Suspense fallback={<PageFallback />}>
+                            <Register />
+                        </Suspense>
                     </PublicRoute>
                 ),
             },
@@ -68,37 +86,67 @@ export const router = createBrowserRouter([
         path: '/',
         element: (
             <ProtectedRoute>
-                <MainLayout />
+                <Suspense fallback={<PageFallback />}>
+                    <MainLayout />
+                </Suspense>
             </ProtectedRoute>
         ),
         children: [
             {
                 index: true,
-                element: <Dashboard />,
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <Dashboard />
+                    </Suspense>
+                ),
             },
             {
                 path: 'pos',
-                element: <POS />,
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <POS />
+                    </Suspense>
+                ),
             },
             {
                 path: 'products',
-                element: <Products />,
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <Products />
+                    </Suspense>
+                ),
             },
             {
                 path: 'customers',
-                element: <Customers />,
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <Customers />
+                    </Suspense>
+                ),
             },
             {
                 path: 'orders',
-                element: <Orders />,
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <Orders />
+                    </Suspense>
+                ),
             },
             {
                 path: 'reports',
-                element: <Reports />,
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <Reports />
+                    </Suspense>
+                ),
             },
             {
                 path: 'settings',
-                element: <Settings />,
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <Settings />
+                    </Suspense>
+                ),
             },
         ],
     },
