@@ -3,17 +3,38 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
 const Sidebar = ({ isOpen, closeSidebar }) => {
-    const { isAdmin, user } = useAuth();
+    const { isOwner, isCashier, isMechanic, user } = useAuth();
 
-    const navItems = [
-        { name: 'Dashboard', path: '/', icon: '📊', section: 'main' },
-        { name: 'POS Terminal', path: '/pos', icon: '🛒', badge: 'Live', section: 'main' },
-        { name: 'Auto Parts & Stock', path: '/products', icon: '📦', section: 'inventory' },
-        { name: 'Customer Profiles', path: '/customers', icon: '👥', section: 'crm' },
-        { name: 'Invoices & Orders', path: '/orders', icon: '📝', section: 'sales' },
-        { name: 'Analytics & Reports', path: '/reports', icon: '📈', section: 'analytics' },
-        { name: 'System Settings', path: '/settings', icon: '⚙️', section: 'settings' },
+    // Role-specific nav items with descriptions
+    const allNavItems = [
+        // ALL ROLES
+        { name: 'Dashboard', path: '/', icon: '📊', section: 'main', roles: ['owner', 'cashier', 'mechanic'],
+          desc: { owner: 'Analytics & KPIs', cashier: 'Sales summary', mechanic: 'Workstation' } },
+
+        // OWNER + CASHIER
+        { name: 'POS Terminal', path: '/pos', icon: '🛒', badge: 'Live', section: 'operations', roles: ['owner', 'cashier'],
+          desc: { owner: 'Point of Sale', cashier: 'Process sales' } },
+
+        // ALL ROLES — product access differs by role
+        { name: 'Auto Parts & Stock', path: '/products', icon: '📦', section: 'inventory', roles: ['owner', 'cashier', 'mechanic'],
+          desc: { owner: 'Manage inventory', cashier: 'Browse & sell', mechanic: 'Parts lookup' } },
+
+        // OWNER + CASHIER
+        { name: 'Customers', path: '/customers', icon: '👥', section: 'crm', roles: ['owner', 'cashier'],
+          desc: { owner: 'CRM', cashier: 'Customer records' } },
+        { name: 'Invoices & Orders', path: '/orders', icon: '📝', section: 'sales', roles: ['owner', 'cashier'],
+          desc: { owner: 'All orders', cashier: 'Order history' } },
+
+        // OWNER ONLY
+        { name: 'Analytics & Reports', path: '/reports', icon: '📈', section: 'analytics', roles: ['owner'],
+          desc: { owner: 'Business intelligence' } },
+        { name: 'System Settings', path: '/settings', icon: '⚙️', section: 'settings', roles: ['owner'],
+          desc: { owner: 'Shop configuration' } },
     ];
+
+    const userRole = user?.role || 'owner';
+    const navItems = allNavItems.filter(item => item.roles.includes(userRole));
+
 
     const sections = {
         main: 'Operations',
@@ -113,16 +134,35 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
                             fontSize: '0.8125rem',
                             color: '#fff',
                             background: 'linear-gradient(135deg, var(--color-primary-deep), var(--color-accent-deep))',
+                            flexShrink: 0,
                         }}>
                             {user?.name?.charAt(0)?.toUpperCase() || 'A'}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                             <p style={{ fontWeight: 600, fontSize: '0.8125rem', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {user?.name || 'Administrator'}
+                                {user?.name || 'Shop Owner'}
                             </p>
-                            <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {user?.email || 'admin@apex.com'}
-                            </p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>
+                                <span style={{
+                                    fontSize: '0.5625rem',
+                                    fontWeight: 700,
+                                    textTransform: 'capitalize',
+                                    padding: '1px 7px',
+                                    borderRadius: 10,
+                                    background: userRole === 'owner' ? 'rgba(129,140,248,0.2)' :
+                                                userRole === 'cashier' ? 'rgba(52,211,153,0.2)' :
+                                                'rgba(251,191,36,0.2)',
+                                    color: userRole === 'owner' ? '#818cf8' :
+                                           userRole === 'cashier' ? '#34d399' :
+                                           '#fbbf24',
+                                    border: `1px solid ${userRole === 'owner' ? 'rgba(129,140,248,0.3)' :
+                                             userRole === 'cashier' ? 'rgba(52,211,153,0.3)' :
+                                             'rgba(251,191,36,0.3)'}`,
+                                    letterSpacing: '0.04em',
+                                }}>
+                                    {userRole === 'owner' ? '🔑 Owner' : userRole === 'cashier' ? '🛒 Cashier' : '🔧 Mechanic'}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>

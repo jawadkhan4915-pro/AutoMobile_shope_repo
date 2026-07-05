@@ -25,12 +25,12 @@ const Products = () => {
     });
 
     const defaultProductsList = [
-        { _id: '1', name: 'Brembo Ceramic Brake Pads (Front)', barcode: 'BP-8802', price: 85.00, quantity: 18, category: 'Brake Systems', compatibility: 'Toyota Camry, Honda Accord 2018-2022', status: true, imageUrl: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=400' },
-        { _id: '2', name: 'Castrol Edge 5W-30 Full Synthetic Oil (5L)', barcode: 'OL-5590', price: 45.00, quantity: 45, category: 'Oils & Fluids', compatibility: 'Universal Gasoline & Hybrid Engines', status: true, imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=400' },
-        { _id: '3', name: 'Bosch Iridium Spark Plug Set (4pcs)', barcode: 'SP-9912', price: 48.00, quantity: 4, category: 'Engine Parts', compatibility: 'Ford F-150, Chevy Silverado 2015-2021', status: true, imageUrl: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=400' },
-        { _id: '4', name: 'Michelin Pilot Sport 4S Tire 245/40R18', barcode: 'TR-4018', price: 240.00, quantity: 12, category: 'Tires & Wheels', compatibility: 'BMW 3-Series, Audi A4, Mercedes C-Class', status: true, imageUrl: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=400' },
-        { _id: '5', name: 'Optima RedTop AGM High-Performance Battery', barcode: 'BT-1090', price: 220.00, quantity: 8, category: 'Electrical', compatibility: 'Trucks, SUVs, Heavy Duty Commercial', status: true, imageUrl: 'https://images.unsplash.com/photo-1558441719-67450807e98a?w=400' },
-        { _id: '6', name: 'K&N High-Flow Air Filter Drop-In', barcode: 'AF-3320', price: 62.00, quantity: 24, category: 'Engine Parts', compatibility: 'Nissan GT-R, 370Z, Infiniti Q50', status: true, imageUrl: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=400' },
+        { _id: '1', name: 'Brembo Ceramic Brake Pads (Front)', barcode: 'BP-8802', price: 85.00, quantity: 18, category: 'Brake Systems', compatibility: 'Toyota Camry, Honda Accord 2018-2022', status: true, imageUrl: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=300&h=180&fit=crop&auto=format' },
+        { _id: '2', name: 'Castrol Edge 5W-30 Full Synthetic Oil (5L)', barcode: 'OL-5590', price: 45.00, quantity: 45, category: 'Oils & Fluids', compatibility: 'Universal Gasoline & Hybrid Engines', status: true, imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=300&h=180&fit=crop&auto=format' },
+        { _id: '3', name: 'Bosch Iridium Spark Plug Set (4pcs)', barcode: 'SP-9912', price: 48.00, quantity: 4, category: 'Engine Parts', compatibility: 'Ford F-150, Chevy Silverado 2015-2021', status: true, imageUrl: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=300&h=180&fit=crop&auto=format' },
+        { _id: '4', name: 'Michelin Pilot Sport 4S Tire 245/40R18', barcode: 'TR-4018', price: 240.00, quantity: 12, category: 'Tires & Wheels', compatibility: 'BMW 3-Series, Audi A4, Mercedes C-Class', status: true, imageUrl: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=300&h=180&fit=crop&auto=format' },
+        { _id: '5', name: 'Optima RedTop AGM High-Performance Battery', barcode: 'BT-1090', price: 220.00, quantity: 8, category: 'Electrical', compatibility: 'Trucks, SUVs, Heavy Duty Commercial', status: true, imageUrl: 'https://images.unsplash.com/photo-1558441719-67450807e98a?w=300&h=180&fit=crop&auto=format' },
+        { _id: '6', name: 'K&N High-Flow Air Filter Drop-In', barcode: 'AF-3320', price: 62.00, quantity: 24, category: 'Engine Parts', compatibility: 'Nissan GT-R, 370Z, Infiniti Q50', status: true, imageUrl: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=300&h=180&fit=crop&auto=format' },
     ];
 
     useEffect(() => {
@@ -226,12 +226,14 @@ const Products = () => {
                     {filteredProducts.map((product) => (
                         <div key={product._id} className="card hover-lift group flex flex-col justify-between">
                             <div>
-                                <div className="relative h-44 rounded-t-lg overflow-hidden bg-black/40 mb-3 border border-glass">
+                                <div className="relative overflow-hidden bg-black/40 mb-3 border border-glass" style={{ height: 130, borderRadius: '8px 8px 0 0' }}>
                                     <img 
-                                        src={product.imageUrl || 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=400'} 
+                                        src={product.imageUrl || 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=300&h=130&fit=crop&auto=format'} 
                                         alt={product.name} 
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=400'; }}
+                                        loading="lazy"
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }}
+                                        className="group-hover:scale-105"
+                                        onError={(e) => { e.target.style.display='none'; e.target.parentElement.style.background='rgba(99,102,241,0.1)'; e.target.parentElement.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:2rem">🔧</div>'; }}
                                     />
                                     <span className="absolute top-2 left-2 badge badge-success">
                                         {product.category || 'Spare Part'}
@@ -303,7 +305,7 @@ const Products = () => {
                                         <td>
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded bg-white/10 overflow-hidden flex-shrink-0">
-                                                    <img src={product.imageUrl || 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=100'} className="w-full h-full object-cover" />
+                                                    <img src={product.imageUrl || 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=80&h=80&fit=crop'} className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display='none'; }} />
                                                 </div>
                                                 <div>
                                                     <div className="font-bold text-white">{product.name}</div>

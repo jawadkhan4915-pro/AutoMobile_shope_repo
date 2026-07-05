@@ -2,29 +2,42 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 
-const demoDepartments = {
-  All: [
-    { role: 'Admin', name: 'Demo Shop Admin', email: 'admin@admin.com', pass: 'pass@123', icon: '🛡️' },
-    { role: 'Cashier', name: 'Demo Cashier', email: 'cashier@cashier.com', pass: 'pass@123', icon: '🛒' },
-    { role: 'Manager', name: 'Inventory Manager', email: 'manager@apex.com', pass: 'pass@123', icon: '👔' },
-    { role: 'Mechanic', name: 'Lead Technician', email: 'tech@apex.com', pass: 'pass@123', icon: '🔧' },
-  ],
-  Sales: [
-    { role: 'Head Cashier', name: 'Senior Cashier', email: 'cashier@cashier.com', pass: 'pass@123', icon: '🛒' },
-    { role: 'Sales Lead', name: 'Demo Salesman', email: 'sales@apex.com', pass: 'pass@123', icon: '🏷️' },
-  ],
-  Admin: [
-    { role: 'Owner / Admin', name: 'Demo Admin', email: 'admin@admin.com', pass: 'pass@123', icon: '🛡️' },
-    { role: 'IT Support', name: 'System Admin', email: 'sysadmin@apex.com', pass: 'pass@123', icon: '⚙️' },
-  ]
-};
+// 3-role system: Owner (admin), Cashier, Mechanic
+const demoUsers = [
+  {
+    role: 'Owner',
+    name: 'Shop Owner',
+    email: 'owner@apex.com',
+    pass: 'pass@123',
+    icon: '🔑',
+    description: 'Full access — settings, reports, all modules',
+    color: '#818cf8',
+  },
+  {
+    role: 'Cashier',
+    name: 'Demo Cashier',
+    email: 'cashier@apex.com',
+    pass: 'pass@123',
+    icon: '🛒',
+    description: 'POS terminal, invoices & customer management',
+    color: '#34d399',
+  },
+  {
+    role: 'Mechanic',
+    name: 'Lead Mechanic',
+    email: 'mechanic@apex.com',
+    pass: 'pass@123',
+    icon: '🔧',
+    description: 'Parts lookup, work orders & stock access',
+    color: '#fbbf24',
+  },
+];
 
 const Login = () => {
-  const [email, setEmail] = useState('admin@admin.com');
+  const [email, setEmail] = useState('owner@apex.com');
   const [password, setPassword] = useState('pass@123');
   const [showPassword, setShowPassword] = useState(false);
   const [localError, setLocalError] = useState('');
-  const [activeDept, setActiveDept] = useState('All');
   const [loading, setLoading] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
 
@@ -362,88 +375,70 @@ const Login = () => {
               Quick Demo — Click to Auto-Fill
             </p>
 
-            {/* Dept Tabs */}
-            <div className="flex justify-center" style={{ gap: 6, marginBottom: 14, flexWrap: 'wrap' }}>
-              {Object.keys(demoDepartments).map((dept) => (
+            {/* Role Cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {demoUsers.map((d) => (
                 <button
-                  key={dept}
-                  type="button"
-                  onClick={() => setActiveDept(dept)}
-                  style={{
-                    padding: '5px 14px',
-                    borderRadius: 8,
-                    fontSize: '0.6875rem',
-                    fontWeight: 700,
-                    border: `1.5px solid ${activeDept === dept ? '#6366f1' : '#e2e8f0'}`,
-                    background: activeDept === dept ? '#6366f1' : '#fff',
-                    color: activeDept === dept ? '#fff' : '#64748b',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  {dept}
-                </button>
-              ))}
-            </div>
-
-            {/* Demo Cards */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: 8,
-            }}>
-              {demoDepartments[activeDept].map((d) => (
-                <button
-                  key={d.email + d.role}
+                  key={d.role}
                   type="button"
                   onClick={() => { setEmail(d.email); setPassword(d.pass); }}
                   style={{
                     display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: 10,
-                    padding: '10px 12px',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '11px 14px',
                     background: '#fff',
                     border: '1.5px solid #e2e8f0',
                     borderRadius: 10,
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'all 0.2s',
+                    width: '100%',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#a5b4fc';
-                    e.currentTarget.style.background = 'rgba(99, 102, 241, 0.04)';
+                    e.currentTarget.style.borderColor = d.color;
+                    e.currentTarget.style.background = `${d.color}10`;
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.borderColor = '#e2e8f0';
                     e.currentTarget.style.background = '#fff';
                   }}
                 >
-                  <span style={{ fontSize: '1.25rem', marginTop: 2 }}>{d.icon}</span>
+                  <span style={{
+                    width: 38, height: 38,
+                    borderRadius: 10,
+                    background: `${d.color}18`,
+                    border: `1.5px solid ${d.color}40`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.25rem',
+                    flexShrink: 0,
+                  }}>{d.icon}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div className="flex items-center justify-between" style={{ gap: 4 }}>
-                      <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>{d.role}</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                      <p style={{ fontSize: '0.8125rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>{d.role}</p>
                       <span style={{
-                        fontSize: '0.5rem',
-                        background: '#f1f5f9',
-                        color: '#64748b',
-                        padding: '1px 5px',
+                        fontSize: '0.5625rem',
+                        background: `${d.color}18`,
+                        color: d.color,
+                        padding: '1px 6px',
                         borderRadius: 4,
                         fontWeight: 700,
                         textTransform: 'uppercase',
+                        border: `1px solid ${d.color}30`,
                       }}>
-                        {activeDept}
+                        DEMO
                       </span>
                     </div>
-                    <p style={{ fontSize: '0.625rem', color: '#94a3b8', fontWeight: 500, margin: '2px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {d.name}
+                    <p style={{ fontSize: '0.6875rem', color: '#64748b', margin: 0, lineHeight: 1.3 }}>
+                      {d.description}
                     </p>
-                    <p style={{ fontSize: '0.625rem', color: '#cbd5e1', margin: '1px 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontSize: '0.625rem', color: '#94a3b8', margin: '2px 0 0' }}>
                       {d.email}
                     </p>
-                    <p style={{ fontSize: '0.5625rem', fontWeight: 700, color: 'rgba(99, 102, 241, 0.8)', marginTop: 3 }}>
-                      pw: {d.pass}
-                    </p>
                   </div>
+                  <span style={{ fontSize: '0.75rem', color: '#94a3b8', flexShrink: 0 }}>→</span>
                 </button>
               ))}
             </div>

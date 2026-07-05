@@ -51,13 +51,20 @@ export const AuthProvider = ({ children }) => {
             return { success: true };
         } catch (error) {
             console.warn('Backend login fallback active:', error.message);
-            // Seamless demo login fallback so authentication always succeeds
-            const isCashier = credentials.email?.toLowerCase().includes('cashier');
+            // Seamless demo login fallback — supports cashier, mechanic, owner
+            const email = (credentials.email || '').toLowerCase();
+            let role = 'owner';
+            let name = 'Shop Owner';
+            if (email.includes('cashier') || email.includes('sales')) {
+                role = 'cashier'; name = 'Demo Cashier';
+            } else if (email.includes('mechanic') || email.includes('tech')) {
+                role = 'mechanic'; name = 'Lead Mechanic';
+            }
             const demoUserData = {
                 _id: Date.now().toString(),
-                name: isCashier ? 'Demo Cashier' : 'Demo Admin',
-                email: credentials.email || 'admin@admin.com',
-                role: isCashier ? 'cashier' : 'admin'
+                name,
+                email: credentials.email || 'owner@apex.com',
+                role,
             };
 
             localStorage.setItem('token', 'demo-jwt-token-9021');
@@ -108,7 +115,12 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         isAuthenticated: !!user,
-        isAdmin: user?.role === 'admin',
+        // Role helpers for 3-role system: owner, cashier, mechanic
+        isOwner: user?.role === 'owner' || user?.role === 'admin',
+        isCashier: user?.role === 'cashier',
+        isMechanic: user?.role === 'mechanic',
+        // Legacy alias
+        isAdmin: user?.role === 'owner' || user?.role === 'admin',
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
