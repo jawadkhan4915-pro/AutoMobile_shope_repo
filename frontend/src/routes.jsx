@@ -13,8 +13,11 @@ const Customers = lazy(() => import('./pages/Customers'));
 const Orders = lazy(() => import('./pages/Orders'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Settings = lazy(() => import('./pages/Settings'));
+const MechanicPortal = lazy(() => import('./pages/MechanicPortal'));
+const CashierPortal = lazy(() => import('./pages/CashierPortal'));
 const MainLayout = lazy(() => import('./components/layout/MainLayout'));
 const AuthLayout = lazy(() => import('./components/layout/AuthLayout'));
+
 
 const PageFallback = () => (
     <div className="flex items-center justify-center h-screen w-full bg-[#0B0D17]">
@@ -145,6 +148,22 @@ export const router = createBrowserRouter([
                 element: (
                     <Suspense fallback={<PageFallback />}>
                         <Settings />
+                    </Suspense>
+                ),
+            },
+            {
+                path: 'mechanic',
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <MechanicPortal />
+                    </Suspense>
+                ),
+            },
+            {
+                path: 'cashier',
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <CashierPortal />
                     </Suspense>
                 ),
             },

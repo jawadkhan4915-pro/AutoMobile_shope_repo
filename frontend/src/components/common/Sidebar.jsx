@@ -7,13 +7,29 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
 
     // Role-specific nav items with descriptions
     const allNavItems = [
-        // ALL ROLES
+        // ALL ROLES — Dashboard is the role-based portal entry point
         { name: 'Dashboard', path: '/', icon: '📊', section: 'main', roles: ['owner', 'cashier', 'mechanic'],
           desc: { owner: 'Analytics & KPIs', cashier: 'Sales summary', mechanic: 'Workstation' } },
 
+        // MECHANIC ONLY — direct portal links
+        { name: 'Parts Search', path: '/mechanic?tab=search', icon: '🔍', section: 'operations', roles: ['mechanic'],
+          desc: { mechanic: 'Search parts & stock' } },
+        { name: 'Bill Builder', path: '/mechanic?tab=bill', icon: '🧾', section: 'operations', roles: ['mechanic'],
+          desc: { mechanic: 'Build & generate bill' } },
+        { name: 'My Bills', path: '/mechanic?tab=history', icon: '📋', section: 'operations', roles: ['mechanic'],
+          desc: { mechanic: 'Bill history & QR slips' } },
+
+        // CASHIER ONLY — dedicated portal links
+        { name: 'QR Scanner', path: '/cashier?tab=scanner', icon: '📷', badge: 'Live', section: 'operations', roles: ['cashier'],
+          desc: { cashier: 'Scan mechanic QR bills' } },
+        { name: 'POS Terminal', path: '/cashier?tab=pos', icon: '🛒', section: 'operations', roles: ['cashier'],
+          desc: { cashier: 'Walk-in sales' } },
+        { name: 'Sales Log', path: '/cashier?tab=sales', icon: '📋', section: 'sales', roles: ['cashier'],
+          desc: { cashier: 'Transaction history' } },
+
         // OWNER + CASHIER
-        { name: 'POS Terminal', path: '/pos', icon: '🛒', badge: 'Live', section: 'operations', roles: ['owner', 'cashier'],
-          desc: { owner: 'Point of Sale', cashier: 'Process sales' } },
+        { name: 'POS Terminal', path: '/pos', icon: '🛒', badge: 'Live', section: 'operations', roles: ['owner'],
+          desc: { owner: 'Point of Sale' } },
 
         // ALL ROLES — product access differs by role
         { name: 'Auto Parts & Stock', path: '/products', icon: '📦', section: 'inventory', roles: ['owner', 'cashier', 'mechanic'],

@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { productsAPI } from '../api/apiService';
-import Loader from '../components/common/Loader';
+import React, { useState } from 'react';
+import { useStore } from '../store/useStore';
+import { useAuth } from '../hooks/useAuth';
 import Modal from '../components/common/Modal';
+import { formatImageUrl, handleImageError } from '../store/dataHelpers';
+
+const CATEGORIES = ['Engine Parts', 'Brake Systems', 'Oils & Fluids', 'Tires & Wheels', 'Electrical', 'Accessories'];
 
 const Products = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { isOwner } = useAuth();
+    const { products, addProduct, updateProduct, deleteProduct } = useStore();
+
     const [searchTerm, setSearchTerm] = useState('');
     const [viewMode, setViewMode] = useState('grid');
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -15,67 +19,38 @@ const Products = () => {
     const [currentProduct, setCurrentProduct] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
-        barcode: '',
+        sku: '',
         price: '',
+        costPrice: '',
         quantity: '',
         category: 'Engine Parts',
-        compatibility: 'Toyota Camry 2018-2022',
-        status: true,
+        compatibility: '',
         imageUrl: ''
     });
-
-    const defaultProductsList = [
-        { _id: '1', name: 'Brembo Ceramic Brake Pads (Front)', barcode: 'BP-8802', price: 85.00, quantity: 18, category: 'Brake Systems', compatibility: 'Toyota Camry, Honda Accord 2018-2022', status: true, imageUrl: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=300&h=180&fit=crop&auto=format' },
-        { _id: '2', name: 'Castrol Edge 5W-30 Full Synthetic Oil (5L)', barcode: 'OL-5590', price: 45.00, quantity: 45, category: 'Oils & Fluids', compatibility: 'Universal Gasoline & Hybrid Engines', status: true, imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=300&h=180&fit=crop&auto=format' },
-        { _id: '3', name: 'Bosch Iridium Spark Plug Set (4pcs)', barcode: 'SP-9912', price: 48.00, quantity: 4, category: 'Engine Parts', compatibility: 'Ford F-150, Chevy Silverado 2015-2021', status: true, imageUrl: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=300&h=180&fit=crop&auto=format' },
-        { _id: '4', name: 'Michelin Pilot Sport 4S Tire 245/40R18', barcode: 'TR-4018', price: 240.00, quantity: 12, category: 'Tires & Wheels', compatibility: 'BMW 3-Series, Audi A4, Mercedes C-Class', status: true, imageUrl: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=300&h=180&fit=crop&auto=format' },
-        { _id: '5', name: 'Optima RedTop AGM High-Performance Battery', barcode: 'BT-1090', price: 220.00, quantity: 8, category: 'Electrical', compatibility: 'Trucks, SUVs, Heavy Duty Commercial', status: true, imageUrl: 'https://images.unsplash.com/photo-1558441719-67450807e98a?w=300&h=180&fit=crop&auto=format' },
-        { _id: '6', name: 'K&N High-Flow Air Filter Drop-In', barcode: 'AF-3320', price: 62.00, quantity: 24, category: 'Engine Parts', compatibility: 'Nissan GT-R, 370Z, Infiniti Q50', status: true, imageUrl: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=300&h=180&fit=crop&auto=format' },
-    ];
-
-    useEffect(() => {
-        fetchProducts();
-    }, []);
-
-    const fetchProducts = async () => {
-        try {
-            const response = await productsAPI.getAll({ limit: 100 });
-            if (response.data?.data && response.data.data.length > 0) {
-                setProducts(response.data.data);
-            } else {
-                setProducts(defaultProductsList);
-            }
-        } catch (error) {
-            console.error('Failed to fetch products, using fallback list', error);
-            setProducts(defaultProductsList);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleOpenModal = (product = null) => {
         if (product) {
             setCurrentProduct(product);
             setFormData({
                 name: product.name,
-                barcode: product.barcode,
+                sku: product.sku || product.barcode || '',
                 price: product.price,
+                costPrice: product.costPrice || (product.price * 0.65).toFixed(2),
                 quantity: product.quantity,
                 category: product.category || 'Engine Parts',
                 compatibility: product.compatibility || '',
-                status: product.status,
                 imageUrl: product.imageUrl || ''
             });
         } else {
             setCurrentProduct(null);
             setFormData({
                 name: '',
-                barcode: `SKU-${Math.floor(1000 + Math.random() * 9000)}`,
+                sku: `SKU-${Math.floor(1000 + Math.random() * 9000)}`,
                 price: '',
+                costPrice: '',
                 quantity: '',
                 category: 'Engine Parts',
-                compatibility: 'Toyota Camry 2018-2022',
-                status: true,
+                compatibility: '',
                 imageUrl: ''
             });
         }
@@ -88,50 +63,41 @@ const Products = () => {
     };
 
     const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        try {
-            if (currentProduct) {
-                setProducts(prev => prev.map(p => p._id === currentProduct._id ? { ...p, ...formData, price: parseFloat(formData.price), quantity: parseInt(formData.quantity) } : p));
-            } else {
-                const newProd = {
-                    _id: Date.now().toString(),
-                    ...formData,
-                    price: parseFloat(formData.price),
-                    quantity: parseInt(formData.quantity)
-                };
-                setProducts(prev => [newProd, ...prev]);
-            }
-            handleCloseModal();
-        } catch (error) {
-            console.error('Failed to save product', error);
+        const payload = {
+            ...formData,
+            price: parseFloat(formData.price) || 0,
+            costPrice: parseFloat(formData.costPrice) || parseFloat(formData.price) * 0.65,
+            quantity: parseInt(formData.quantity) || 0,
+        };
+        if (currentProduct) {
+            updateProduct(currentProduct._id, payload);
+        } else {
+            addProduct(payload);
         }
+        handleCloseModal();
     };
 
     const handleDeleteProduct = (id) => {
-        if (window.confirm('Are you sure you want to remove this product?')) {
-            setProducts(prev => prev.filter(p => p._id !== id));
+        if (window.confirm('Remove this product from inventory?')) {
+            deleteProduct(id);
         }
     };
 
     const filteredProducts = products.filter(product => {
         const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
-        const matchesSearch = `${product.name} ${product.barcode} ${product.compatibility || ''}`
+        const matchesSearch = `${product.name} ${product.sku || ''} ${product.barcode || ''} ${product.compatibility || ''}`
             .toLowerCase()
             .includes(searchTerm.toLowerCase());
         return matchesCategory && matchesSearch;
     });
 
-    const lowStockCount = products.filter(p => p.quantity < 10).length;
-
-    if (loading) return <Loader />;
+    const lowStockCount = products.filter(p => p.quantity <= 5).length;
 
     return (
         <div className="animate-fade-in p-2 md:p-6 space-y-6">
@@ -139,36 +105,35 @@ const Products = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 glass-panel p-6">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold mb-1" style={{ color: 'var(--color-primary)' }}>
-                        Auto Parts & Inventory Catalog
+                        Auto Parts &amp; Inventory Catalog
                     </h1>
                     <p className="text-sm text-muted">
-                        Track stock levels, vehicle compatibility, SKUs, and product pricing.
+                        {products.length} products · Track stock, compatibility, SKUs, and pricing.
                     </p>
                 </div>
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="btn btn-primary hover-glow flex items-center gap-2"
-                >
-                    <span>➕</span> Add Spare Part
-                </button>
+                {isOwner && (
+                    <button
+                        onClick={() => handleOpenModal()}
+                        className="btn btn-primary hover-glow flex items-center gap-2"
+                    >
+                        <span>➕</span> Add Spare Part
+                    </button>
+                )}
             </div>
 
             {/* Low Stock Warning Banner */}
             {lowStockCount > 0 && (
-                <div className="p-4 rounded-lg flex items-center justify-between border" style={{ background: 'rgba(255, 0, 85, 0.1)', borderColor: 'rgba(255, 0, 85, 0.3)' }}>
+                <div className="p-4 rounded-lg flex items-center justify-between border"
+                    style={{ background: 'rgba(248,113,113,0.08)', borderColor: 'rgba(248,113,113,0.25)' }}>
                     <div className="flex items-center gap-3">
                         <span className="text-xl">⚠️</span>
                         <div>
-                            <p className="font-bold text-danger text-sm">Low Stock Alert ({lowStockCount} items)</p>
-                            <p className="text-xs text-muted">Some auto parts are running below safety threshold (10 units).</p>
+                            <p className="font-bold text-sm" style={{ color: '#f87171' }}>
+                                Low Stock Alert ({lowStockCount} items)
+                            </p>
+                            <p className="text-xs text-muted">Parts running below safety threshold (5 units).</p>
                         </div>
                     </div>
-                    <button 
-                        onClick={() => setSearchTerm('')} 
-                        className="btn btn-sm btn-danger"
-                    >
-                        View Items
-                    </button>
                 </div>
             )}
 
@@ -186,16 +151,15 @@ const Products = () => {
                 </div>
 
                 <div className="flex items-center gap-2 overflow-x-auto w-full md:w-auto">
-                    {['All', 'Brake Systems', 'Engine Parts', 'Oils & Fluids', 'Tires & Wheels', 'Electrical'].map((cat) => (
+                    {['All', ...CATEGORIES].map((cat) => (
                         <button
                             key={cat}
                             onClick={() => setSelectedCategory(cat)}
-                            className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all whitespace-nowrap border ${
-                                selectedCategory === cat
-                                    ? 'bg-primary text-black border-primary font-bold'
-                                    : 'bg-panel text-muted border-glass hover:text-white'
-                            }`}
-                            style={selectedCategory === cat ? { background: 'var(--color-primary)' } : {}}
+                            className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-all whitespace-nowrap border ${selectedCategory === cat
+                                ? 'text-white border-indigo-500'
+                                : 'bg-panel text-muted border-glass hover:text-white'
+                                }`}
+                            style={selectedCategory === cat ? { background: 'linear-gradient(135deg,#6366f1,#818cf8)', borderColor: '#6366f1' } : {}}
                         >
                             {cat}
                         </button>
@@ -204,47 +168,49 @@ const Products = () => {
                     <div className="ml-auto flex gap-1 border border-glass rounded-lg p-1 bg-black/30">
                         <button
                             onClick={() => setViewMode('grid')}
-                            className={`p-1.5 text-xs rounded ${viewMode === 'grid' ? 'bg-primary text-black font-bold' : 'text-muted'}`}
-                            style={viewMode === 'grid' ? { background: 'var(--color-primary)' } : {}}
-                        >
-                            ⊞
-                        </button>
+                            className={`p-1.5 text-xs rounded ${viewMode === 'grid' ? 'text-white' : 'text-muted'}`}
+                            style={viewMode === 'grid' ? { background: 'linear-gradient(135deg,#6366f1,#818cf8)' } : {}}
+                        >⊞</button>
                         <button
                             onClick={() => setViewMode('table')}
-                            className={`p-1.5 text-xs rounded ${viewMode === 'table' ? 'bg-primary text-black font-bold' : 'text-muted'}`}
-                            style={viewMode === 'table' ? { background: 'var(--color-primary)' } : {}}
-                        >
-                            ☰
-                        </button>
+                            className={`p-1.5 text-xs rounded ${viewMode === 'table' ? 'text-white' : 'text-muted'}`}
+                            style={viewMode === 'table' ? { background: 'linear-gradient(135deg,#6366f1,#818cf8)' } : {}}
+                        >☰</button>
                     </div>
                 </div>
             </div>
 
-            {/* Inventory Display Grid/Table */}
+            {/* Grid View */}
             {viewMode === 'grid' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredProducts.map((product) => (
                         <div key={product._id} className="card hover-lift group flex flex-col justify-between">
                             <div>
                                 <div className="relative overflow-hidden bg-black/40 mb-3 border border-glass" style={{ height: 130, borderRadius: '8px 8px 0 0' }}>
-                                    <img 
-                                        src={product.imageUrl || 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=300&h=130&fit=crop&auto=format'} 
-                                        alt={product.name} 
+                                    <img
+                                        src={formatImageUrl(product.imageUrl)}
+                                        alt={product.name}
                                         loading="lazy"
                                         style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }}
                                         className="group-hover:scale-105"
-                                        onError={(e) => { e.target.style.display='none'; e.target.parentElement.style.background='rgba(99,102,241,0.1)'; e.target.parentElement.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:2rem">🔧</div>'; }}
+                                        onError={handleImageError}
                                     />
-                                    <span className="absolute top-2 left-2 badge badge-success">
+                                    <span className="absolute top-2 left-2 badge badge-success" style={{ fontSize: '0.55rem' }}>
                                         {product.category || 'Spare Part'}
                                     </span>
-                                    <span className={`absolute top-2 right-2 badge ${product.quantity < 10 ? 'badge-danger' : 'badge-success'}`}>
-                                        {product.quantity < 10 ? 'Low Stock' : 'In Stock'}
+                                    <span className={`absolute top-2 right-2 badge`}
+                                        style={{
+                                            fontSize: '0.55rem',
+                                            background: product.quantity === 0 ? 'rgba(248,113,113,0.2)' : product.quantity <= 5 ? 'rgba(251,191,36,0.2)' : 'rgba(52,211,153,0.15)',
+                                            color: product.quantity === 0 ? '#f87171' : product.quantity <= 5 ? '#fbbf24' : '#34d399',
+                                            border: `1px solid ${product.quantity === 0 ? 'rgba(248,113,113,0.3)' : product.quantity <= 5 ? 'rgba(251,191,36,0.3)' : 'rgba(52,211,153,0.3)'}`,
+                                        }}>
+                                        {product.quantity === 0 ? '● OUT' : product.quantity <= 5 ? '● LOW' : '● IN STOCK'}
                                     </span>
                                 </div>
 
                                 <h3 className="font-bold text-base text-white line-clamp-1 mb-1">{product.name}</h3>
-                                <p className="text-xs font-mono text-muted mb-2">SKU: {product.barcode}</p>
+                                <p className="text-xs font-mono text-muted mb-2">SKU: {product.sku || product.barcode}</p>
 
                                 {product.compatibility && (
                                     <p className="text-xs text-muted mb-3 bg-white/5 p-2 rounded border border-glass flex items-center gap-1">
@@ -257,33 +223,37 @@ const Products = () => {
                                 <div className="flex justify-between items-center pt-2 border-t border-glass mb-3">
                                     <div>
                                         <p className="text-xs text-muted">Stock Qty</p>
-                                        <p className={`font-extrabold ${product.quantity < 10 ? 'text-danger' : 'text-success'}`}>
+                                        <p className="font-extrabold" style={{ color: product.quantity === 0 ? '#f87171' : product.quantity <= 5 ? '#fbbf24' : '#34d399' }}>
                                             {product.quantity} units
                                         </p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-xs text-muted">Unit Price</p>
-                                        <p className="text-lg font-bold text-primary">${product.price?.toFixed(2)}</p>
+                                        <p className="text-lg font-bold" style={{ color: 'var(--color-primary)' }}>${product.price?.toFixed(2)}</p>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleOpenModal(product)}
-                                        className="btn btn-sm btn-outline flex-1"
-                                    >
-                                        ✏️ Edit
-                                    </button>
-                                    <button 
-                                        onClick={() => handleDeleteProduct(product._id)}
-                                        className="btn btn-sm btn-danger px-3"
-                                    >
-                                        🗑️
-                                    </button>
-                                </div>
+                                {isOwner && (
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleOpenModal(product)}
+                                            className="btn btn-sm btn-outline flex-1"
+                                        >✏️ Edit</button>
+                                        <button
+                                            onClick={() => handleDeleteProduct(product._id)}
+                                            className="btn btn-sm btn-danger px-3"
+                                        >🗑️</button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
+                    {filteredProducts.length === 0 && (
+                        <div className="col-span-full text-center py-16" style={{ color: '#475569' }}>
+                            <p style={{ fontSize: '3rem' }}>🔧</p>
+                            <p>No parts found matching your search</p>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div className="card">
@@ -293,10 +263,11 @@ const Products = () => {
                                 <tr>
                                     <th>Part Details</th>
                                     <th>Category</th>
-                                    <th>Vehicle Compatibility</th>
+                                    <th>Compatibility</th>
+                                    <th>Cost</th>
                                     <th>Price</th>
-                                    <th>Stock Level</th>
-                                    <th>Actions</th>
+                                    <th>Stock</th>
+                                    {isOwner && <th>Actions</th>}
                                 </tr>
                             </thead>
                             <tbody>
@@ -305,143 +276,116 @@ const Products = () => {
                                         <td>
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded bg-white/10 overflow-hidden flex-shrink-0">
-                                                    <img src={product.imageUrl || 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=80&h=80&fit=crop'} className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display='none'; }} />
+                                                    <img
+                                                        src={formatImageUrl(product.imageUrl)}
+                                                        className="w-full h-full object-cover"
+                                                        loading="lazy"
+                                                        alt={product.name}
+                                                        onError={handleImageError}
+                                                    />
                                                 </div>
                                                 <div>
                                                     <div className="font-bold text-white">{product.name}</div>
-                                                    <div className="text-xs text-muted font-mono">{product.barcode}</div>
+                                                    <div className="text-xs text-muted font-mono">{product.sku || product.barcode}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td><span className="badge badge-success">{product.category || 'General'}</span></td>
                                         <td className="text-xs text-muted">{product.compatibility || 'Universal'}</td>
-                                        <td className="font-bold text-primary">${product.price?.toFixed(2)}</td>
+                                        <td className="font-mono text-sm" style={{ color: '#64748b' }}>${(product.costPrice || product.price * 0.65).toFixed(2)}</td>
+                                        <td className="font-bold" style={{ color: 'var(--color-primary)' }}>${product.price?.toFixed(2)}</td>
                                         <td>
-                                            <span className={`font-bold ${product.quantity < 10 ? 'text-danger' : 'text-success'}`}>
+                                            <span className="font-bold" style={{ color: product.quantity === 0 ? '#f87171' : product.quantity <= 5 ? '#fbbf24' : '#34d399' }}>
                                                 {product.quantity} units
                                             </span>
                                         </td>
-                                        <td>
-                                            <div className="flex gap-2">
-                                                <button onClick={() => handleOpenModal(product)} className="text-primary hover:text-white">✏️</button>
-                                                <button onClick={() => handleDeleteProduct(product._id)} className="text-danger hover:text-white">🗑️</button>
-                                            </div>
-                                        </td>
+                                        {isOwner && (
+                                            <td>
+                                                <div className="flex gap-2">
+                                                    <button onClick={() => handleOpenModal(product)} className="text-primary hover:text-white">✏️</button>
+                                                    <button onClick={() => handleDeleteProduct(product._id)} className="text-danger hover:text-white">🗑️</button>
+                                                </div>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
+                        {filteredProducts.length === 0 && (
+                            <div className="text-center py-16" style={{ color: '#475569' }}>
+                                <p style={{ fontSize: '3rem' }}>🔧</p>
+                                <p>No parts found</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
 
-            {/* Modal */}
-            <Modal
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                title={currentProduct ? "Edit Auto Part" : "Add New Auto Part"}
-                footer={
-                    <>
-                        <button onClick={handleCloseModal} className="btn btn-secondary">Cancel</button>
-                        <button onClick={handleSubmit} className="btn btn-primary">
-                            {currentProduct ? "Update Product" : "Save Product"}
-                        </button>
-                    </>
-                }
-            >
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label className="form-label">Part Name</label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            className="form-input"
-                            required
-                        />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
+            {/* Add/Edit Modal */}
+            {isOwner && (
+                <Modal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    title={currentProduct ? 'Edit Auto Part' : 'Add New Auto Part'}
+                    footer={
+                        <>
+                            <button onClick={handleCloseModal} className="btn btn-secondary">Cancel</button>
+                            <button onClick={handleSubmit} className="btn btn-primary">
+                                {currentProduct ? 'Update Product' : 'Save Product'}
+                            </button>
+                        </>
+                    }
+                >
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="form-label">SKU / Barcode</label>
-                            <input
-                                type="text"
-                                name="barcode"
-                                value={formData.barcode}
-                                onChange={handleInputChange}
-                                className="form-input"
-                                required
-                            />
+                            <label className="form-label">Part Name</label>
+                            <input type="text" name="name" value={formData.name} onChange={handleInputChange} className="form-input" required />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="form-label">SKU / Barcode</label>
+                                <input type="text" name="sku" value={formData.sku} onChange={handleInputChange} className="form-input" required />
+                            </div>
+                            <div>
+                                <label className="form-label">Category</label>
+                                <select name="category" value={formData.category} onChange={handleInputChange} className="form-input">
+                                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-4">
+                            <div>
+                                <label className="form-label">Sell Price ($)</label>
+                                <input type="number" step="0.01" name="price" value={formData.price} onChange={handleInputChange} className="form-input" required />
+                            </div>
+                            <div>
+                                <label className="form-label">Cost Price ($)</label>
+                                <input type="number" step="0.01" name="costPrice" value={formData.costPrice} onChange={handleInputChange} className="form-input" placeholder="Auto-calculated" />
+                            </div>
+                            <div>
+                                <label className="form-label">Quantity</label>
+                                <input type="number" name="quantity" value={formData.quantity} onChange={handleInputChange} className="form-input" required />
+                            </div>
                         </div>
                         <div>
-                            <label className="form-label">Category</label>
-                            <select
-                                name="category"
-                                value={formData.category}
-                                onChange={handleInputChange}
-                                className="form-input"
-                            >
-                                <option value="Brake Systems">Brake Systems</option>
-                                <option value="Engine Parts">Engine Parts</option>
-                                <option value="Oils & Fluids">Oils & Fluids</option>
-                                <option value="Tires & Wheels">Tires & Wheels</option>
-                                <option value="Electrical">Electrical</option>
-                                <option value="Accessories">Accessories</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="form-label">Price ($)</label>
-                            <input
-                                type="number"
-                                step="0.01"
-                                name="price"
-                                value={formData.price}
-                                onChange={handleInputChange}
-                                className="form-input"
-                                required
-                            />
+                            <label className="form-label">Vehicle Fitment / Compatibility</label>
+                            <input type="text" name="compatibility" value={formData.compatibility} onChange={handleInputChange} className="form-input" placeholder="e.g. Honda Civic 2016-2021, Toyota Corolla" />
                         </div>
                         <div>
-                            <label className="form-label">Quantity</label>
-                            <input
-                                type="number"
-                                name="quantity"
-                                value={formData.quantity}
-                                onChange={handleInputChange}
-                                className="form-input"
-                                required
-                            />
+                            <label className="form-label">Image URL</label>
+                            <input type="text" name="imageUrl" value={formData.imageUrl} onChange={handleInputChange} className="form-input" placeholder="https://..." />
+                            {formData.imageUrl && (
+                                <img
+                                    src={formatImageUrl(formData.imageUrl)}
+                                    alt="Preview"
+                                    onError={handleImageError}
+                                    style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8, marginTop: 8 }}
+                                />
+                            )}
                         </div>
-                    </div>
-
-                    <div>
-                        <label className="form-label">Vehicle Fitment / Compatibility</label>
-                        <input
-                            type="text"
-                            name="compatibility"
-                            value={formData.compatibility}
-                            onChange={handleInputChange}
-                            className="form-input"
-                            placeholder="e.g. Honda Civic 2016-2021, Toyota Corolla"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="form-label">Image URL</label>
-                        <input
-                            type="text"
-                            name="imageUrl"
-                            value={formData.imageUrl}
-                            onChange={handleInputChange}
-                            className="form-input"
-                            placeholder="https://..."
-                        />
-                    </div>
-                </form>
-            </Modal>
+                    </form>
+                </Modal>
+            )}
         </div>
     );
 };

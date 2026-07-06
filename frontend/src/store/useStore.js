@@ -3,7 +3,7 @@
  * Manages: products, mechanicBills, transactions, customers
  * Works offline-first; syncs to backend when available.
  */
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, createElement } from 'react';
 
 const StoreContext = createContext(null);
 
@@ -192,7 +192,7 @@ export const StoreProvider = ({ children }) => {
         getMonthlyStats, getDailyChartData,
     };
 
-    return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
+    return createElement(StoreContext.Provider, { value }, children);
 };
 
 export const useStore = () => {

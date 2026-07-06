@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { productsAPI } from '../../api/apiService';
-import Loader from '../common/Loader';
+import React, { useState, useMemo, useCallback } from 'react';
+import { useStore } from '../../store/useStore';
+import { formatImageUrl, handleImageError } from '../../store/dataHelpers';
 import { useCart } from '../../hooks/useCart';
 
-// Debounce hook for fast search without API spam
+// Debounce hook for fast search
 const useDebounce = (value, delay = 350) => {
     const [debounced, setDebounced] = useState(value);
-    useEffect(() => {
+    React.useEffect(() => {
         const timer = setTimeout(() => setDebounced(value), delay);
         return () => clearTimeout(timer);
     }, [value, delay]);
@@ -15,48 +15,16 @@ const useDebounce = (value, delay = 350) => {
 
 const categories = ['All', 'Engine Parts', 'Brake Systems', 'Oils & Fluids', 'Tires & Wheels', 'Electrical', 'Accessories'];
 
-const defaultAutoProducts = [
-    { id: '1', name: 'Brembo Ceramic Brake Pads (Front)', price: 85.00, quantity: 18, category: 'Brake Systems', compatibility: 'Toyota Camry, Honda Accord 2018-2022', imageUrl: 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=300&h=180&auto=format&fit=crop' },
-    { id: '2', name: 'Castrol Edge 5W-30 Full Synthetic Oil (5L)', price: 45.00, quantity: 45, category: 'Oils & Fluids', compatibility: 'Universal Gasoline & Hybrid Engines', imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?w=300&h=180&auto=format&fit=crop' },
-    { id: '3', name: 'Bosch Iridium Spark Plug Set (4pcs)', price: 48.00, quantity: 32, category: 'Engine Parts', compatibility: 'Ford F-150, Chevy Silverado 2015-2021', imageUrl: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=300&h=180&auto=format&fit=crop' },
-    { id: '4', name: 'Michelin Pilot Sport 4S Tire 245/40R18', price: 240.00, quantity: 12, category: 'Tires & Wheels', compatibility: 'BMW 3-Series, Audi A4, Mercedes C-Class', imageUrl: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?w=300&h=180&auto=format&fit=crop' },
-    { id: '5', name: 'Optima RedTop AGM High-Performance Battery', price: 220.00, quantity: 8, category: 'Electrical', compatibility: 'Trucks, SUVs, Heavy Duty Commercial', imageUrl: 'https://images.unsplash.com/photo-1558441719-67450807e98a?w=300&h=180&auto=format&fit=crop' },
-    { id: '6', name: 'K&N High-Flow Air Filter Drop-In', price: 62.00, quantity: 24, category: 'Engine Parts', compatibility: 'Nissan GT-R, 370Z, Infiniti Q50', imageUrl: 'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?w=300&h=180&auto=format&fit=crop' },
-    { id: '7', name: 'Bosch Premium Wiper Blade Set (2pcs)', price: 28.00, quantity: 55, category: 'Accessories', compatibility: 'Universal Fit — Most vehicles 2010-2024', imageUrl: 'https://images.unsplash.com/photo-1605116257823-2f89b27e1f96?w=300&h=180&auto=format&fit=crop' },
-    { id: '8', name: 'Pentosin ATF 1 Automatic Transmission Fluid', price: 35.00, quantity: 20, category: 'Oils & Fluids', compatibility: 'BMW, Mercedes, Audi, Volkswagen', imageUrl: 'https://images.unsplash.com/photo-1625046773738-dbd4f8de7a37?w=300&h=180&auto=format&fit=crop' },
-    { id: '9', name: 'ACDelco Professional Wheel Hub Assembly', price: 95.00, quantity: 6, category: 'Brake Systems', compatibility: 'Chevrolet Silverado, GMC Sierra 2014-2020', imageUrl: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=300&h=180&auto=format&fit=crop' },
-];
+
 
 const ProductGrid = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { products } = useStore();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [addingId, setAddingId] = useState(null);
     const { addToCart } = useCart();
 
     const debouncedSearch = useDebounce(searchTerm, 350);
-
-    const fetchProducts = useCallback(async (search = '') => {
-        try {
-            setLoading(true);
-            const response = await productsAPI.getAll({ search, limit: 100, status: true });
-            if (response.data?.data && response.data.data.length > 0) {
-                setProducts(response.data.data);
-            } else {
-                setProducts(defaultAutoProducts);
-            }
-        } catch {
-            setProducts(defaultAutoProducts);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    // Only fetch when debounced value changes
-    useEffect(() => {
-        fetchProducts(debouncedSearch);
-    }, [debouncedSearch, fetchProducts]);
 
     const handleAddToCart = useCallback(async (e, product) => {
         e.stopPropagation();
@@ -66,20 +34,21 @@ const ProductGrid = () => {
         setAddingId(null);
     }, [addToCart]);
 
-    // Client-side filtering (fast, no extra API call for category)
+    // Client-side filtering from store
     const filteredProducts = useMemo(() => {
         return products.filter((product) => {
             const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
-            const term = searchTerm.toLowerCase();
+            const term = debouncedSearch.toLowerCase();
             const matchesSearch = !term ||
                 product.name.toLowerCase().includes(term) ||
                 (product.compatibility && product.compatibility.toLowerCase().includes(term)) ||
-                (product.sku && product.sku.toLowerCase().includes(term));
+                (product.sku && product.sku.toLowerCase().includes(term)) ||
+                (product.barcode && product.barcode.toLowerCase().includes(term));
             return matchesCategory && matchesSearch;
         });
-    }, [products, selectedCategory, searchTerm]);
+    }, [products, selectedCategory, debouncedSearch]);
 
-    const fallbackImg = 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=300&h=180&auto=format&fit=crop';
+    const loading = false; // products from store are always available
 
     return (
         <div style={{
@@ -222,10 +191,10 @@ const ProductGrid = () => {
                                         flexShrink: 0,
                                     }}>
                                         <img
-                                            src={product.imageUrl || fallbackImg}
+                                            src={formatImageUrl(product.imageUrl)}
                                             alt={product.name}
                                             loading="lazy"
-                                            onError={e => { e.target.src = fallbackImg; }}
+                                            onError={handleImageError}
                                             style={{
                                                 width: '100%',
                                                 height: '100%',
