@@ -4,6 +4,7 @@
  * Works offline-first; syncs to backend when available.
  */
 import { createContext, useContext, useState, useCallback, useEffect, createElement } from 'react';
+import { productsAPI } from '../api/apiService';
 
 const StoreContext = createContext(null);
 
@@ -58,29 +59,86 @@ export const StoreProvider = ({ children }) => {
     useEffect(() => save('apex_mechanic_bills', mechanicBills), [mechanicBills]);
     useEffect(() => save('apex_customers', customers), [customers]);
 
+    // Fetch products from database on mount or login
+    const fetchProducts = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (token) {
+                const res = await productsAPI.getAll({ limit: 100 });
+                if (res.data?.data) {
+                    setProductsState(res.data.data);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to sync products with backend:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
+
     // ── Products ──────────────────────────────────────────────────────────────
-    const updateProductStock = useCallback((productId, qtySold) => {
+    const updateProductStock = useCallback(async (productId, qtySold) => {
         setProductsState(prev => prev.map(p =>
             p._id === productId
                 ? { ...p, quantity: Math.max(0, p.quantity - qtySold) }
                 : p
         ));
+        try {
+            const prod = products.find(p => p._id === productId);
+            if (prod) {
+                const updatedQty = Math.max(0, prod.quantity - qtySold);
+                await productsAPI.update(productId, { quantity: updatedQty });
+            }
+        } catch (error) {
+            console.error('Failed to update product stock in backend:', error);
+        }
+    }, [products]);
+
+    const updateProduct = useCallback(async (productId, updates) => {
+        try {
+            const res = await productsAPI.update(productId, updates);
+            if (res.data?.data) {
+                setProductsState(prev => prev.map(p =>
+                    p._id === productId ? res.data.data : p
+                ));
+            }
+        } catch (error) {
+            console.error('Failed to update product in backend:', error);
+            // fallback offline:
+            setProductsState(prev => prev.map(p =>
+                p._id === productId ? { ...p, ...updates } : p
+            ));
+        }
     }, []);
 
-    const updateProduct = useCallback((productId, updates) => {
-        setProductsState(prev => prev.map(p =>
-            p._id === productId ? { ...p, ...updates } : p
-        ));
+    const addProduct = useCallback(async (product) => {
+        try {
+            const res = await productsAPI.create(product);
+            if (res.data?.data) {
+                const newProduct = res.data.data;
+                setProductsState(prev => [newProduct, ...prev]);
+                return newProduct;
+            }
+        } catch (error) {
+            console.error('Failed to create product in backend:', error);
+            // fallback offline:
+            const newProduct = { ...product, _id: genId('P') };
+            setProductsState(prev => [newProduct, ...prev]);
+            return newProduct;
+        }
     }, []);
 
-    const addProduct = useCallback((product) => {
-        const newProduct = { ...product, _id: genId('P') };
-        setProductsState(prev => [newProduct, ...prev]);
-        return newProduct;
-    }, []);
-
-    const deleteProduct = useCallback((productId) => {
-        setProductsState(prev => prev.filter(p => p._id !== productId));
+    const deleteProduct = useCallback(async (productId) => {
+        try {
+            await productsAPI.delete(productId);
+            setProductsState(prev => prev.filter(p => p._id !== productId));
+        } catch (error) {
+            console.error('Failed to delete product in backend:', error);
+            // fallback offline:
+            setProductsState(prev => prev.filter(p => p._id !== productId));
+        }
     }, []);
 
     // ── Mechanic Bills ────────────────────────────────────────────────────────

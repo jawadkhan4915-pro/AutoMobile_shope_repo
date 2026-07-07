@@ -1,4 +1,4 @@
-import { createContext, useState, useCallback } from 'react';
+import { createContext, useState, useCallback, useEffect } from 'react';
 import { cartAPI } from '../api/apiService';
 
 export const CartContext = createContext();
@@ -13,11 +13,18 @@ export const CartProvider = ({ children }) => {
     const fetchCart = useCallback(async () => {
         try {
             const response = await cartAPI.getCart();
-            setCart(response.data.data);
+            setCart(response.data.data || { items: [], total: 0, count: 0 });
         } catch (error) {
             console.error('Failed to fetch cart:', error);
         }
     }, []);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            fetchCart();
+        }
+    }, [fetchCart]);
 
     // Optimistic add — updates UI instantly, syncs backend in background
     const addToCart = useCallback(async (productId, quantity = 1) => {
@@ -66,7 +73,10 @@ export const CartProvider = ({ children }) => {
         });
 
         try {
-            await cartAPI.updateItem(itemId, { quantity });
+            const res = await cartAPI.updateItem(itemId, { quantity });
+            if (res.data?.data) {
+                setCart(res.data.data);
+            }
             return { success: true };
         } catch (error) {
             await fetchCart(); // Revert to server state on failure
@@ -84,7 +94,10 @@ export const CartProvider = ({ children }) => {
         });
 
         try {
-            await cartAPI.removeItem(itemId);
+            const res = await cartAPI.removeItem(itemId);
+            if (res.data?.data) {
+                setCart(res.data.data);
+            }
             return { success: true };
         } catch (error) {
             await fetchCart(); // Revert on failure
@@ -96,7 +109,10 @@ export const CartProvider = ({ children }) => {
     const clearCart = useCallback(async () => {
         setCart({ items: [], total: 0, count: 0 }); // Instant clear
         try {
-            await cartAPI.clearCart();
+            const res = await cartAPI.clearCart();
+            if (res.data?.data) {
+                setCart(res.data.data);
+            }
             return { success: true };
         } catch (error) {
             await fetchCart(); // Revert on failure

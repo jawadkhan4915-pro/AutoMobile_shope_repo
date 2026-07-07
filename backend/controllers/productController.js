@@ -79,7 +79,7 @@ const getProduct = async (req, res) => {
 // @access  Private/Admin
 const createProduct = async (req, res) => {
     try {
-        const { name, description, barcode, price, tax, quantity, status } = req.body;
+        const { name, description, barcode, price, tax, quantity, status, sku, category, compatibility, costPrice, image } = req.body;
 
         const productData = {
             name,
@@ -89,6 +89,11 @@ const createProduct = async (req, res) => {
             tax,
             quantity,
             status,
+            sku,
+            category,
+            compatibility,
+            costPrice: costPrice ? parseFloat(costPrice) : 0,
+            image: image || null
         };
 
         // Handle image upload
@@ -124,7 +129,7 @@ const updateProduct = async (req, res) => {
             });
         }
 
-        const { name, description, barcode, price, tax, quantity, status } = req.body;
+        const { name, description, barcode, price, tax, quantity, status, sku, category, compatibility, costPrice, imageUrl, image } = req.body;
 
         const updateData = {
             name,
@@ -134,6 +139,11 @@ const updateProduct = async (req, res) => {
             tax,
             quantity,
             status,
+            sku,
+            category,
+            compatibility,
+            costPrice: costPrice ? parseFloat(costPrice) : 0,
+            image: image || imageUrl || null
         };
 
         // Handle image upload

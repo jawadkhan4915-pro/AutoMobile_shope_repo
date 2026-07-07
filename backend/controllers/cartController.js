@@ -1,23 +1,27 @@
 const Cart = require('../models/Cart');
 const Product = require('../models/Product');
 
+// Helper to get the full cart shape
+const getFullCart = async (userId) => {
+    const cartItems = await Cart.find({ user: userId }).populate('product');
+    const total = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
+    return {
+        items: cartItems,
+        total,
+        count: cartItems.length,
+    };
+};
+
 // @desc    Get cart items
 // @route   GET /api/cart
 // @access  Private
 const getCart = async (req, res) => {
     try {
-        const cartItems = await Cart.find({ user: req.user._id }).populate('product');
-
-        // Calculate total
-        const total = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
+        const cartData = await getFullCart(req.user._id);
 
         res.json({
             success: true,
-            data: {
-                items: cartItems,
-                total,
-                count: cartItems.length,
-            },
+            data: cartData,
         });
     } catch (error) {
         res.status(500).json({
@@ -82,11 +86,11 @@ const addToCart = async (req, res) => {
             });
         }
 
-        await cartItem.populate('product');
+        const cartData = await getFullCart(req.user._id);
 
         res.status(201).json({
             success: true,
-            data: cartItem,
+            data: cartData,
         });
     } catch (error) {
         res.status(500).json({
@@ -126,11 +130,12 @@ const updateCartItem = async (req, res) => {
 
         cartItem.quantity = quantity;
         await cartItem.save();
-        await cartItem.populate('product');
+
+        const cartData = await getFullCart(req.user._id);
 
         res.json({
             success: true,
-            data: cartItem,
+            data: cartData,
         });
     } catch (error) {
         res.status(500).json({
@@ -159,8 +164,11 @@ const removeFromCart = async (req, res) => {
 
         await Cart.findByIdAndDelete(req.params.id);
 
+        const cartData = await getFullCart(req.user._id);
+
         res.json({
             success: true,
+            data: cartData,
             message: 'Item removed from cart',
         });
     } catch (error) {
@@ -178,8 +186,11 @@ const clearCart = async (req, res) => {
     try {
         await Cart.deleteMany({ user: req.user._id });
 
+        const cartData = await getFullCart(req.user._id);
+
         res.json({
             success: true,
+            data: cartData,
             message: 'Cart cleared',
         });
     } catch (error) {

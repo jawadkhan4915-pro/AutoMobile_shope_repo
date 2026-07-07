@@ -40,6 +40,24 @@ const productSchema = new mongoose.Schema(
             type: Boolean,
             default: true,
         },
+        sku: {
+            type: String,
+            trim: true,
+        },
+        category: {
+            type: String,
+            trim: true,
+            default: 'General',
+        },
+        compatibility: {
+            type: String,
+            trim: true,
+        },
+        costPrice: {
+            type: Number,
+            min: 0,
+            default: 0,
+        },
     },
     {
         timestamps: true,
