@@ -66,7 +66,70 @@
 
   /* Font */
   --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Glass/Panel Defaults */
+  --bg-panel: rgba(30, 41, 59, 0.7);
+  --border-glass: rgba(148, 163, 184, 0.12);
 }
+
+[data-theme="light"] {
+  /* Core Backgrounds */
+  --bg-base: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-elevated: #e2e8f0;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --bg-input: #ffffff;
+  --bg-hover: rgba(99, 102, 241, 0.06);
+  --bg-panel: rgba(255, 255, 255, 0.8);
+  --border-glass: rgba(15, 23, 42, 0.08);
+
+  /* Brand Palette override */
+  --color-primary: #4f46e5;
+  --color-primary-bright: #6366f1;
+  --color-primary-deep: #4338ca;
+  --color-accent: #0284c7;
+  --color-accent-deep: #0369a1;
+
+  /* Typography */
+  --text-primary: #000000;         /* Inverted to black as requested */
+  --text-secondary: #1e293b;       /* Dark slate text */
+  --text-muted: #64748b;
+  --text-inverse: #ffffff;
+
+  /* Borders */
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-default: rgba(15, 23, 42, 0.16);
+  --border-focus: rgba(79, 70, 229, 0.6);
+
+  /* Layout Overrides */
+  --bg-layout: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  --bg-sidebar: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+  --bg-header: rgba(255, 255, 255, 0.85);
+  --bg-sidebar-profile: rgba(79, 70, 229, 0.05);
+  --text-sidebar: #1e293b;
+}
+
+[data-theme="light"] body {
+  background-color: #f1f5f9;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(56, 189, 248, 0.04) 0%, transparent 50%);
+  color: var(--text-primary);
+}
+
+/* Smooth transitions for theme switching */
+body, header, aside, .card, .glass-panel, input, textarea, select, button, table, th, td, p, h1, h2, h3, h4, h5, h6, span, strong, div {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* Fallback Utility classes for JSX styles that mimic tailwind */
+.bg-panel {
+  background-color: var(--bg-panel) !important;
+}
+.border-glass {
+  border-color: var(--border-glass) !important;
+}
+
 
 /* ═══════════════ RESET ═══════════════ */
 *, *::before, *::after {

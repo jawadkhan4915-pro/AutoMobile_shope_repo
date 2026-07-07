@@ -43,6 +43,7 @@ export const authAPI = {
     register: (userData) => api.post('/auth/register', userData),
     getMe: () => api.get('/auth/me'),
     logout: () => api.post('/auth/logout'),
+    getUsers: () => api.get('/auth/users'),
 };
 
 // Products API
@@ -102,6 +103,16 @@ export const settingsAPI = {
     getOne: (key) => api.get(`/settings/${key}`),
     update: (key, data) => api.put(`/settings/${key}`, data),
     delete: (key) => api.delete(`/settings/${key}`),
+};
+
+// Attendance API
+export const attendanceAPI = {
+    checkIn: (data) => api.post('/attendance/check-in', data),
+    checkOut: (data) => api.post('/attendance/check-out', data),
+    getStatus: () => api.get('/attendance/status'),
+    getHistory: () => api.get('/attendance/history'),
+    getAll: (params) => api.get('/attendance/all', { params }),
+    manualRecord: (data) => api.post('/attendance/manual', data),
 };
 
 export default api;

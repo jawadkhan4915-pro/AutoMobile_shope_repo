@@ -38,6 +38,8 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
         // OWNER + CASHIER
         { name: 'Customers', path: '/customers', icon: '👥', section: 'crm', roles: ['owner', 'cashier'],
           desc: { owner: 'CRM', cashier: 'Customer records' } },
+        { name: 'Staff Attendance', path: '/attendance', icon: '📅', section: 'crm', roles: ['owner', 'cashier', 'mechanic'],
+          desc: { owner: 'Manage attendance', cashier: 'Clock in/out', mechanic: 'Clock in/out' } },
         { name: 'Invoices & Orders', path: '/orders', icon: '📝', section: 'sales', roles: ['owner', 'cashier'],
           desc: { owner: 'All orders', cashier: 'Order history' } },
 
@@ -82,7 +84,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
                     isOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}
                 style={{
-                    background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+                    background: 'var(--bg-sidebar, linear-gradient(180deg, #0f172a 0%, #1e293b 100%))',
                     borderRight: '1px solid var(--border-subtle)',
                 }}
             >
@@ -112,7 +114,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
                                 fontSize: '0.9375rem',
                                 fontWeight: 800,
                                 letterSpacing: '0.04em',
-                                color: '#fff',
+                                color: 'var(--text-primary)',
                                 margin: 0,
                                 lineHeight: 1.2,
                             }}>
@@ -136,7 +138,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
                 <div style={{
                     padding: '14px 20px',
                     borderBottom: '1px solid var(--border-subtle)',
-                    background: 'rgba(99, 102, 241, 0.04)',
+                    background: 'var(--bg-sidebar-profile, rgba(99, 102, 241, 0.04))',
                 }}>
                     <div className="flex items-center gap-3">
                         <div style={{
@@ -155,7 +157,7 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
                             {user?.name?.charAt(0)?.toUpperCase() || 'A'}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                            <p style={{ fontWeight: 600, fontSize: '0.8125rem', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <p style={{ fontWeight: 600, fontSize: '0.8125rem', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {user?.name || 'Shop Owner'}
                             </p>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 2 }}>

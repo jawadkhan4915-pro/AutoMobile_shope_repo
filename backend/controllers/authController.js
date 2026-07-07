@@ -115,9 +115,28 @@ const logout = async (req, res) => {
     });
 };
 
+// @desc    Get all users
+// @route   GET /api/auth/users
+// @access  Private/Admin
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.find({});
+        res.json({
+            success: true,
+            data: users,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 module.exports = {
     register,
     login,
     getMe,
     logout,
+    getUsers,
 };

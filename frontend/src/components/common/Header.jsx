@@ -12,6 +12,18 @@ const Header = ({ toggleSidebar }) => {
     const dropdownRef = useRef(null);
     const notifRef = useRef(null);
 
+    // Theme state and sync logic
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    };
+
     const handleLogout = () => {
         logout();
         navigate('/login');
@@ -60,7 +72,7 @@ const Header = ({ toggleSidebar }) => {
             padding: '0 24px',
             height: 56,
             borderBottom: '1px solid var(--border-subtle)',
-            background: 'rgba(15, 23, 42, 0.85)',
+            background: 'var(--bg-header, rgba(15, 23, 42, 0.85))',
             backdropFilter: 'blur(16px) saturate(1.2)',
             position: 'sticky',
             top: 0,
@@ -121,6 +133,34 @@ const Header = ({ toggleSidebar }) => {
                     <span>🛒</span>
                     <span>New Sale</span>
                 </Link>
+
+                {/* Theme Toggle Button */}
+                <button
+                    onClick={toggleTheme}
+                    style={{
+                        padding: 8,
+                        borderRadius: 8,
+                        background: 'transparent',
+                        border: '1px solid transparent',
+                        color: 'var(--text-secondary)',
+                        cursor: 'pointer',
+                        fontSize: 16,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'transform 0.3s ease, color 0.15s',
+                    }}
+                    className="hover-scale theme-toggle-btn"
+                    title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                >
+                    <span style={{
+                        transform: theme === 'dark' ? 'rotate(0deg)' : 'rotate(360deg)',
+                        transition: 'transform 0.5s ease',
+                        display: 'inline-block'
+                    }}>
+                        {theme === 'dark' ? '☀️' : '🌙'}
+                    </span>
+                </button>
 
                 {/* Notifications */}
                 <div style={{ position: 'relative' }} ref={notifRef}>

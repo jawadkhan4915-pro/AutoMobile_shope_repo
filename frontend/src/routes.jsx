@@ -15,6 +15,7 @@ const Reports = lazy(() => import('./pages/Reports'));
 const Settings = lazy(() => import('./pages/Settings'));
 const MechanicPortal = lazy(() => import('./pages/MechanicPortal'));
 const CashierPortal = lazy(() => import('./pages/CashierPortal'));
+const Attendance = lazy(() => import('./pages/Attendance'));
 const MainLayout = lazy(() => import('./components/layout/MainLayout'));
 const AuthLayout = lazy(() => import('./components/layout/AuthLayout'));
 
@@ -148,6 +149,14 @@ export const router = createBrowserRouter([
                 element: (
                     <Suspense fallback={<PageFallback />}>
                         <Settings />
+                    </Suspense>
+                ),
+            },
+            {
+                path: 'attendance',
+                element: (
+                    <Suspense fallback={<PageFallback />}>
+                        <Attendance />
                     </Suspense>
                 ),
             },

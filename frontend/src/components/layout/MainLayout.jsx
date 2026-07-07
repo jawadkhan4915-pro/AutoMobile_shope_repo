@@ -18,7 +18,7 @@ const MainLayout = () => {
         <div
             className="flex h-screen overflow-hidden"
             style={{
-                background: 'linear-gradient(135deg, #0B0D17 0%, #1a1d2e 100%)'
+                background: 'var(--bg-layout, linear-gradient(135deg, #0B0D17 0%, #1a1d2e 100%))'
             }}
         >
             <Sidebar isOpen={sidebarOpen} closeSidebar={closeSidebar} />
