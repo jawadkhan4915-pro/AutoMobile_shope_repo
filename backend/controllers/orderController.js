@@ -91,7 +91,7 @@ const getOrder = async (req, res) => {
 // @access  Private
 const createOrder = async (req, res) => {
     try {
-        const { customerId, paymentMethod, paymentAmount } = req.body;
+        const { customerId, paymentMethod, paymentAmount, paymentReference } = req.body;
 
         // Get cart items
         const cartItems = await Cart.find({ user: req.user._id }).populate('product');
@@ -149,6 +149,7 @@ const createOrder = async (req, res) => {
                 order: order._id,
                 amount: paymentAmount,
                 method: paymentMethod || 'cash',
+                reference: paymentReference || null,
             });
         }
 

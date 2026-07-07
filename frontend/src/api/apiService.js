@@ -95,6 +95,8 @@ export const cartAPI = {
 export const paymentsAPI = {
     create: (paymentData) => api.post('/payments', paymentData),
     getOrderPayments: (orderId) => api.get(`/payments/order/${orderId}`),
+    getConfig: () => api.get('/payments/config'),
+    createPaymentIntent: (amount) => api.post('/payments/create-payment-intent', { amount }),
 };
 
 // Settings API
