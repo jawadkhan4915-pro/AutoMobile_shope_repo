@@ -110,7 +110,7 @@ const MechanicBillSlip = ({ bill, onClose }) => {
                     }}>🖨️ Print Bill Slip</button>
                     <button onClick={onClose} style={{
                         padding: '11px 18px', borderRadius: 10,
-                        background: '#f1f5f9', color: '#64748b', fontWeight: 600, border: 'none', cursor: 'pointer',
+                        background: 'var(--text-primary)', color: '#64748b', fontWeight: 600, border: 'none', cursor: 'pointer',
                     }}>Close</button>
                 </div>
             </div>

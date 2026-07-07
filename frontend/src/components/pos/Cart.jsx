@@ -39,7 +39,7 @@ const Cart = ({ onCheckout }) => {
                 <h2 style={{
                     fontSize: '0.9375rem',
                     fontWeight: 700,
-                    color: '#f1f5f9',
+                    color: 'var(--text-primary)',
                     margin: 0,
                     display: 'flex',
                     alignItems: 'center',
@@ -115,7 +115,7 @@ const Cart = ({ onCheckout }) => {
                                     <h4 style={{
                                         fontSize: '0.8rem',
                                         fontWeight: 600,
-                                        color: '#e2e8f0',
+                                        color: 'var(--text-primary)',
                                         margin: 0,
                                         lineHeight: 1.3,
                                         overflow: 'hidden',
@@ -153,7 +153,7 @@ const Cart = ({ onCheckout }) => {
                                             textAlign: 'center',
                                             fontSize: '0.8125rem',
                                             fontWeight: 700,
-                                            color: '#f1f5f9',
+                                            color: 'var(--text-primary)',
                                         }}>
                                             {item.quantity}
                                         </span>
@@ -233,7 +233,7 @@ const Cart = ({ onCheckout }) => {
                         justifyContent: 'space-between',
                         fontSize: '1.0625rem',
                         fontWeight: 800,
-                        color: '#f1f5f9',
+                        color: 'var(--text-primary)',
                         paddingTop: 8,
                         borderTop: '1px solid rgba(148,163,184,0.15)',
                         marginTop: 2,

@@ -7,7 +7,7 @@ const StockReport = ({ products, showReorder = false, onReorder }) => {
     return (
         <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h3 style={{ margin: 0, color: '#f1f5f9', fontWeight: 700 }}>📦 Complete Stock Inventory</h3>
+                <h3 style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 700 }}>📦 Complete Stock Inventory</h3>
                 <div style={{ display: 'flex', gap: 16, fontSize: '0.8125rem' }}>
                     <span style={{ color: '#34d399', fontWeight: 700 }}>Total Value: ${totalStockValue.toFixed(2)}</span>
                     <span style={{ color: '#64748b' }}>{products.length} products</span>
@@ -38,11 +38,11 @@ const StockReport = ({ products, showReorder = false, onReorder }) => {
                                             onError={handleImageError}
                                             loading="lazy"
                                         />
-                                        <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#e2e8f0' }}>{p.name}</span>
+                                        <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)' }}>{p.name}</span>
                                     </td>
                                     <td style={{ padding: '12px', fontSize: '0.75rem', color: '#818cf8', fontFamily: 'monospace' }}>{p.sku || p.barcode}</td>
                                     <td style={{ padding: '12px', fontSize: '0.75rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{p.category}</td>
-                                    <td style={{ padding: '12px', fontWeight: 700, color: '#e2e8f0', whiteSpace: 'nowrap' }}>${p.price.toFixed(2)}</td>
+                                    <td style={{ padding: '12px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>${p.price.toFixed(2)}</td>
                                     <td style={{ padding: '12px', fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>${costP.toFixed(2)}</td>
                                     <td style={{ padding: '12px', fontWeight: 800, color: '#34d399', whiteSpace: 'nowrap' }}>${profitPerUnit.toFixed(2)}</td>
                                     <td style={{ padding: '12px', fontWeight: 800, fontSize: '1rem', color: p.quantity === 0 ? '#f87171' : isLow ? '#fbbf24' : '#34d399' }}>{p.quantity}</td>

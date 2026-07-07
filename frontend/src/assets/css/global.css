@@ -70,6 +70,7 @@
   /* Glass/Panel Defaults */
   --bg-panel: rgba(30, 41, 59, 0.7);
   --border-glass: rgba(148, 163, 184, 0.12);
+  --text-main: #f1f5f9;
 }
 
 [data-theme="light"] {
@@ -95,6 +96,7 @@
   --text-secondary: #1e293b;       /* Dark slate text */
   --text-muted: #64748b;
   --text-inverse: #ffffff;
+  --text-main: #1e293b;
 
   /* Borders */
   --border-subtle: rgba(15, 23, 42, 0.08);

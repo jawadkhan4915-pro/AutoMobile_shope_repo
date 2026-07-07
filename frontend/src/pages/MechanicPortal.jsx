@@ -75,7 +75,7 @@ const MechanicPortal = () => {
     });
 
     const cardStyle = {
-        background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.15)',
+        background: 'var(--bg-panel, rgba(15,23,42,0.75))', border: '1px solid var(--border-glass, rgba(148,163,184,0.15))',
         borderRadius: 14, padding: 20,
     };
 
@@ -83,7 +83,7 @@ const MechanicPortal = () => {
         <div style={{ padding: '20px', maxWidth: 1300, margin: '0 auto' }} className="animate-fade-in">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
                 <div>
-                    <h1 style={{ margin: 0, fontSize: '1.625rem', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.03em' }}>
+                    <h1 style={{ margin: 0, fontSize: '1.625rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
                         🔧 Mechanic Workstation
                     </h1>
                     <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>
@@ -128,7 +128,7 @@ const MechanicPortal = () => {
 
             {activeTab === 'history' && (
                 <div style={cardStyle}>
-                    <h3 style={{ margin: '0 0 16px', color: '#f1f5f9', fontWeight: 700 }}>My Bill History</h3>
+                    <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontWeight: 700 }}>My Bill History</h3>
                     {myBills.length === 0 ? (
                         <div style={{ textAlign: 'center', padding: '40px 0', color: '#475569' }}>
                             <p style={{ fontSize: '2rem' }}>📋</p><p>No bills generated yet</p>
@@ -142,7 +142,7 @@ const MechanicPortal = () => {
                                     borderRadius: 10, border: '1px solid rgba(148,163,184,0.1)', flexWrap: 'wrap', gap: 10,
                                 }}>
                                     <div>
-                                        <p style={{ margin: 0, fontWeight: 700, color: '#e2e8f0', fontSize: '0.875rem' }}>{bill.id}</p>
+                                        <p style={{ margin: 0, fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.875rem' }}>{bill.id}</p>
                                         <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: '#64748b' }}>
                                             {bill.customerName || 'Walk-in'} · {bill.vehicleInfo || '—'} · {new Date(bill.date).toLocaleDateString()}
                                         </p>

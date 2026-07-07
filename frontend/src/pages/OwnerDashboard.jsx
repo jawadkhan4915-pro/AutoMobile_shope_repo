@@ -138,7 +138,7 @@ const OwnerDashboard = () => {
     }, [monthStats, transactions, products, currentYear, currentMonth, monthLabel]);
 
     const cardStyle = {
-        background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.15)',
+        background: 'var(--bg-panel, rgba(15,23,42,0.75))', border: '1px solid var(--border-glass, rgba(148,163,184,0.15))',
         borderRadius: 14, padding: 20,
     };
 
@@ -156,7 +156,7 @@ const OwnerDashboard = () => {
             {/* Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, flexWrap: 'wrap', gap: 16 }}>
                 <div>
-                    <h1 style={{ margin: 0, fontSize: '1.625rem', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.03em' }}>
+                    <h1 style={{ margin: 0, fontSize: '1.625rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
                         🔑 Owner Dashboard
                     </h1>
                     <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>
@@ -211,7 +211,7 @@ const OwnerDashboard = () => {
                         {/* Revenue & Profit chart */}
                         <div style={cardStyle}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                                <h3 style={{ margin: 0, color: '#f1f5f9', fontWeight: 700, fontSize: '0.9375rem' }}>Revenue vs Profit</h3>
+                                <h3 style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.9375rem' }}>Revenue vs Profit</h3>
                                 <div style={{ display: 'flex', gap: 4 }}>
                                     {[7, 14, 30].map(d => (
                                         <button key={d} onClick={() => setChartRange(d)} style={{
@@ -237,7 +237,7 @@ const OwnerDashboard = () => {
                                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.08)" />
                                     <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
                                     <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
-                                    <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 8, color: '#f1f5f9' }} formatter={(v, n) => [`$${v.toFixed(2)}`, n === 'revenue' ? 'Revenue' : 'Profit']} />
+                                    <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 8, color: 'var(--text-primary)' }} formatter={(v, n) => [`$${v.toFixed(2)}`, n === 'revenue' ? 'Revenue' : 'Profit']} />
                                     <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2} fill="url(#revGrad)" />
                                     <Area type="monotone" dataKey="profit" stroke="#34d399" strokeWidth={2} fill="url(#profGrad)" />
                                 </AreaChart>
@@ -246,13 +246,13 @@ const OwnerDashboard = () => {
 
                         {/* Sales type pie */}
                         <div style={cardStyle}>
-                            <h3 style={{ margin: '0 0 16px', color: '#f1f5f9', fontWeight: 700, fontSize: '0.9375rem' }}>Sales by Type</h3>
+                            <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.9375rem' }}>Sales by Type</h3>
                             <ResponsiveContainer width="100%" height={180}>
                                 <PieChart>
                                     <Pie data={typePieData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={4} dataKey="value">
                                         {typePieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                                     </Pie>
-                                    <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 8, color: '#f1f5f9' }} formatter={v => `$${v.toFixed(2)}`} />
+                                    <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 8, color: 'var(--text-primary)' }} formatter={v => `$${v.toFixed(2)}`} />
                                     <Legend formatter={v => <span style={{ color: '#94a3b8', fontSize: '0.75rem' }}>{v}</span>} />
                                 </PieChart>
                             </ResponsiveContainer>
@@ -268,7 +268,7 @@ const OwnerDashboard = () => {
                                     <div key={p._id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', background: 'rgba(15,23,42,0.5)', borderRadius: 8, border: '1px solid rgba(248,113,113,0.15)' }}>
                                         <img src={p.imageUrl} alt={p.name} style={{ width: 38, height: 30, objectFit: 'cover', borderRadius: 5 }} onError={e => e.target.style.display = 'none'} loading="lazy" />
                                         <div style={{ flex: 1, minWidth: 0 }}>
-                                            <p style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, color: '#e2e8f0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</p>
+                                            <p style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</p>
                                             <p style={{ margin: '2px 0 0', fontSize: '0.6875rem', color: '#64748b' }}>{p.category}</p>
                                         </div>
                                         <span style={{ padding: '2px 8px', borderRadius: 20, fontSize: '0.6875rem', fontWeight: 800, background: p.quantity === 0 ? 'rgba(248,113,113,0.2)' : 'rgba(251,191,36,0.2)', color: p.quantity === 0 ? '#f87171' : '#fbbf24', whiteSpace: 'nowrap' }}>
@@ -286,7 +286,7 @@ const OwnerDashboard = () => {
             {activeTab === 'staff' && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, alignItems: 'start' }}>
                     <div style={cardStyle}>
-                        <h3 style={{ margin: '0 0 16px', color: '#f1f5f9', fontWeight: 700 }}>Staff Performance</h3>
+                        <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontWeight: 700 }}>Staff Performance</h3>
                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                             <thead>
                                 <tr style={{ borderBottom: '1px solid rgba(148,163,184,0.15)' }}>
@@ -307,7 +307,7 @@ const OwnerDashboard = () => {
                                                     fontWeight: 800, fontSize: '0.875rem', color: '#fff',
                                                     background: `linear-gradient(135deg, ${COLORS[i % COLORS.length]}, ${COLORS[(i + 1) % COLORS.length]})`,
                                                 }}>{s.name.charAt(0)}</div>
-                                                <span style={{ fontWeight: 600, color: '#e2e8f0', fontSize: '0.875rem' }}>{s.name}</span>
+                                                <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.875rem' }}>{s.name}</span>
                                             </div>
                                         </td>
                                         <td style={{ padding: '12px' }}>
@@ -324,13 +324,13 @@ const OwnerDashboard = () => {
                         </table>
                     </div>
                     <div style={cardStyle}>
-                        <h3 style={{ margin: '0 0 16px', color: '#f1f5f9', fontWeight: 700 }}>Revenue by Staff</h3>
+                        <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontWeight: 700 }}>Revenue by Staff</h3>
                         <ResponsiveContainer width="100%" height={300}>
                             <BarChart data={staffStats} layout="vertical">
                                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.08)" horizontal={false} />
                                 <XAxis type="number" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
                                 <YAxis type="category" dataKey="name" tick={{ fill: '#94a3b8', fontSize: 12 }} axisLine={false} tickLine={false} width={90} />
-                                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 8, color: '#f1f5f9' }} formatter={v => `$${v.toFixed(2)}`} />
+                                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 8, color: 'var(--text-primary)' }} formatter={v => `$${v.toFixed(2)}`} />
                                 <Bar dataKey="revenue" fill="#6366f1" radius={[0, 6, 6, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
@@ -342,7 +342,7 @@ const OwnerDashboard = () => {
             {activeTab === 'stock' && (
                 <div style={cardStyle}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                        <h3 style={{ margin: 0, color: '#f1f5f9', fontWeight: 700 }}>📦 Complete Stock Inventory</h3>
+                        <h3 style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 700 }}>📦 Complete Stock Inventory</h3>
                         <div style={{ display: 'flex', gap: 16, fontSize: '0.8125rem' }}>
                             <span style={{ color: '#34d399', fontWeight: 700 }}>Total Value: ${totalStockValue.toFixed(2)}</span>
                             <span style={{ color: '#64748b' }}>{products.length} products</span>
@@ -368,11 +368,11 @@ const OwnerDashboard = () => {
                                             onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                                             <td style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: 10 }}>
                                                 <img src={p.imageUrl} alt={p.name} style={{ width: 40, height: 30, objectFit: 'cover', borderRadius: 5, flexShrink: 0 }} onError={e => e.target.style.display = 'none'} loading="lazy" />
-                                                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#e2e8f0' }}>{p.name}</span>
+                                                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)' }}>{p.name}</span>
                                             </td>
                                             <td style={{ padding: '12px', fontSize: '0.75rem', color: '#818cf8', fontFamily: 'monospace' }}>{p.sku}</td>
                                             <td style={{ padding: '12px', fontSize: '0.75rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{p.category}</td>
-                                            <td style={{ padding: '12px', fontWeight: 700, color: '#e2e8f0', whiteSpace: 'nowrap' }}>${p.price.toFixed(2)}</td>
+                                            <td style={{ padding: '12px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>${p.price.toFixed(2)}</td>
                                             <td style={{ padding: '12px', fontWeight: 700, color: '#64748b', whiteSpace: 'nowrap' }}>${costP.toFixed(2)}</td>
                                             <td style={{ padding: '12px', fontWeight: 800, color: '#34d399', whiteSpace: 'nowrap' }}>${profitPerUnit.toFixed(2)}</td>
                                             <td style={{ padding: '12px', fontWeight: 800, fontSize: '1rem', color: p.quantity === 0 ? '#f87171' : p.quantity <= 5 ? '#fbbf24' : '#34d399' }}>{p.quantity}</td>
@@ -398,7 +398,7 @@ const OwnerDashboard = () => {
                     <div style={{ ...cardStyle, border: '1px solid rgba(99,102,241,0.25)', background: 'rgba(99,102,241,0.04)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 14 }}>
                             <div>
-                                <h3 style={{ margin: 0, color: '#f1f5f9', fontWeight: 800, fontSize: '1.1rem' }}>📥 Monthly Excel Report</h3>
+                                <h3 style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 800, fontSize: '1.1rem' }}>📥 Monthly Excel Report</h3>
                                 <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>
                                     Download complete report for <strong style={{ color: '#818cf8' }}>{monthLabel}</strong>
                                 </p>
@@ -432,7 +432,7 @@ const OwnerDashboard = () => {
 
                     {/* All transactions */}
                     <div style={cardStyle}>
-                        <h3 style={{ margin: '0 0 16px', color: '#f1f5f9', fontWeight: 700 }}>All Transactions ({transactions.length})</h3>
+                        <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontWeight: 700 }}>All Transactions ({transactions.length})</h3>
                         <div style={{ overflowX: 'auto' }}>
                             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                 <thead>
@@ -454,7 +454,7 @@ const OwnerDashboard = () => {
                                                 </span>
                                             </td>
                                             <td style={{ padding: '11px 12px', fontSize: '0.8rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{t.staffName || '—'}</td>
-                                            <td style={{ padding: '11px 12px', fontSize: '0.8rem', color: '#e2e8f0', whiteSpace: 'nowrap' }}>{t.customerName || 'Walk-in'}</td>
+                                            <td style={{ padding: '11px 12px', fontSize: '0.8rem', color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{t.customerName || 'Walk-in'}</td>
                                             <td style={{ padding: '11px 12px', fontSize: '0.75rem', color: '#64748b' }}>{(t.items || []).length} item(s)</td>
                                             <td style={{ padding: '11px 12px', fontSize: '0.75rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{t.method || '—'}</td>
                                             <td style={{ padding: '11px 12px', fontWeight: 800, color: '#34d399', fontSize: '0.9375rem', whiteSpace: 'nowrap' }}>${(t.total || 0).toFixed(2)}</td>

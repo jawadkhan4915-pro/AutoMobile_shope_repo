@@ -48,7 +48,7 @@ const CashierPortal = () => {
     }, [payMechanicBill, user]);
 
     const cardStyle = {
-        background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.15)',
+        background: 'var(--bg-panel, rgba(15,23,42,0.75))', border: '1px solid var(--border-glass, rgba(148,163,184,0.15))',
         borderRadius: 14, padding: 20,
     };
 
@@ -63,7 +63,7 @@ const CashierPortal = () => {
         <div style={{ padding: '20px', maxWidth: 1300, margin: '0 auto' }} className="animate-fade-in">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
                 <div>
-                    <h1 style={{ margin: 0, fontSize: '1.625rem', fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.03em' }}>
+                    <h1 style={{ margin: 0, fontSize: '1.625rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
                         🛒 Cashier Terminal
                     </h1>
                     <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>
@@ -108,7 +108,7 @@ const CashierPortal = () => {
                             <SalesChart data={chartData} showProfit={false} height={200} />
                         </div>
                         <div style={cardStyle}>
-                            <h3 style={{ margin: '0 0 14px', color: '#f1f5f9', fontWeight: 700, fontSize: '0.9375rem' }}>
+                            <h3 style={{ margin: '0 0 14px', color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.9375rem' }}>
                                 Pending QR Bills
                                 {pendingBills.length > 0 && <span style={{ marginLeft: 8, padding: '2px 8px', borderRadius: 20, fontSize: '0.625rem', fontWeight: 800, background: 'rgba(251,191,36,0.2)', color: '#fbbf24' }}>{pendingBills.length}</span>}
                             </h3>
@@ -119,7 +119,7 @@ const CashierPortal = () => {
                                     {pendingBills.map(b => (
                                         <div key={b.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', background: 'rgba(251,191,36,0.06)', borderRadius: 8, border: '1px solid rgba(251,191,36,0.15)' }}>
                                             <div>
-                                                <p style={{ margin: 0, fontWeight: 700, color: '#e2e8f0', fontSize: '0.8125rem' }}>{b.id}</p>
+                                                <p style={{ margin: 0, fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.8125rem' }}>{b.id}</p>
                                                 <p style={{ margin: '2px 0 0', fontSize: '0.6875rem', color: '#64748b' }}>{b.mechanicName} · {b.customerName || 'Walk-in'}</p>
                                             </div>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -138,19 +138,19 @@ const CashierPortal = () => {
             {activeTab === 'scanner' && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'start' }}>
                     <div>
-                        <h3 style={{ margin: '0 0 14px', color: '#f1f5f9', fontWeight: 700 }}>📷 Scan Mechanic QR Bill</h3>
+                        <h3 style={{ margin: '0 0 14px', color: 'var(--text-primary)', fontWeight: 700 }}>📷 Scan Mechanic QR Bill</h3>
                         {!scannedBill
                             ? <QRScanner onScan={handleQRScan} onManualEntry={handleManualEntry} />
                             : <ScannedBillView billData={scannedBill} mechanicBills={mechanicBills} onProcess={handleProcessPayment} onClear={() => setScannedBill(null)} />
                         }
                     </div>
                     <div>
-                        <h3 style={{ margin: '0 0 14px', color: '#f1f5f9', fontWeight: 700 }}>Recently Paid Bills</h3>
+                        <h3 style={{ margin: '0 0 14px', color: 'var(--text-primary)', fontWeight: 700 }}>Recently Paid Bills</h3>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             {mechanicBills.filter(b => b.status === 'paid').slice(0, 8).map(b => (
                                 <div key={b.id} style={{ ...cardStyle, padding: '12px 14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <div>
-                                        <p style={{ margin: 0, fontWeight: 700, fontSize: '0.8125rem', color: '#e2e8f0' }}>{b.id}</p>
+                                        <p style={{ margin: 0, fontWeight: 700, fontSize: '0.8125rem', color: 'var(--text-primary)' }}>{b.id}</p>
                                         <p style={{ margin: '2px 0 0', fontSize: '0.6875rem', color: '#64748b' }}>{b.mechanicName} · {b.customerName || 'Walk-in'}</p>
                                     </div>
                                     <div style={{ textAlign: 'right' }}>
@@ -167,7 +167,7 @@ const CashierPortal = () => {
             {activeTab === 'pos' && (
                 <div style={{ height: 'calc(100vh - 200px)' }}>
                     <div style={{ marginBottom: 12 }}>
-                        <h3 style={{ margin: 0, color: '#f1f5f9', fontWeight: 700 }}>🛒 Walk-in Customer POS</h3>
+                        <h3 style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 700 }}>🛒 Walk-in Customer POS</h3>
                         <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.8125rem' }}>Add parts to cart and process payment</p>
                     </div>
                     <div style={{ display: 'flex', gap: 16, height: 'calc(100% - 60px)' }}>
@@ -183,7 +183,7 @@ const CashierPortal = () => {
 
             {activeTab === 'sales' && (
                 <div style={cardStyle}>
-                    <h3 style={{ margin: '0 0 16px', color: '#f1f5f9', fontWeight: 700 }}>📋 Sales Log</h3>
+                    <h3 style={{ margin: '0 0 16px', color: 'var(--text-primary)', fontWeight: 700 }}>📋 Sales Log</h3>
                     <div style={{ overflowX: 'auto' }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                             <thead>
@@ -202,7 +202,7 @@ const CashierPortal = () => {
                                                 {t.type === 'mechanic_bill' ? '🔧 Mechanic' : '🛒 POS'}
                                             </span>
                                         </td>
-                                        <td style={{ padding: '11px 12px', fontSize: '0.8125rem', color: '#e2e8f0', whiteSpace: 'nowrap' }}>{t.customerName || 'Walk-in'}</td>
+                                        <td style={{ padding: '11px 12px', fontSize: '0.8125rem', color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{t.customerName || 'Walk-in'}</td>
                                         <td style={{ padding: '11px 12px', fontSize: '0.75rem', color: '#64748b' }}>{(t.items || []).length} item(s)</td>
                                         <td style={{ padding: '11px 12px', fontSize: '0.75rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{t.method || '—'}</td>
                                         <td style={{ padding: '11px 12px', fontSize: '0.9rem', fontWeight: 800, color: '#34d399', whiteSpace: 'nowrap' }}>${(t.total || 0).toFixed(2)}</td>

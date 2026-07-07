@@ -80,7 +80,7 @@ const ProductGrid = () => {
                         background: 'rgba(15, 23, 42, 0.7)',
                         border: '1px solid rgba(148, 163, 184, 0.2)',
                         borderRadius: 8,
-                        color: '#f1f5f9',
+                        color: 'var(--text-primary)',
                         fontSize: '0.875rem',
                         outline: 'none',
                         fontFamily: 'var(--font-family)',
@@ -243,7 +243,7 @@ const ProductGrid = () => {
                                         <h3 style={{
                                             fontSize: '0.8rem',
                                             fontWeight: 700,
-                                            color: '#e2e8f0',
+                                            color: 'var(--text-primary)',
                                             lineHeight: 1.35,
                                             display: '-webkit-box',
                                             WebkitLineClamp: 2,

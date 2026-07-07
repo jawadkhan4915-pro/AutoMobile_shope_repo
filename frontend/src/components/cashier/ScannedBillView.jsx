@@ -36,7 +36,7 @@ const ScannedBillView = ({ billData, mechanicBills, onProcess, onClear }) => {
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
                 <div>
-                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: '#f1f5f9' }}>
+                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                         {isPaid ? '✅' : '🔍'} Bill {bill.id}
                     </h3>
                     <p style={{ margin: '3px 0 0', fontSize: '0.75rem', color: '#64748b' }}>
@@ -63,7 +63,7 @@ const ScannedBillView = ({ billData, mechanicBills, onProcess, onClear }) => {
                     <tbody>
                         {(bill.items || []).map((item, i) => (
                             <tr key={i} style={{ borderBottom: '1px solid rgba(148,163,184,0.08)' }}>
-                                <td style={{ padding: '10px', fontSize: '0.8125rem', color: '#e2e8f0' }}>{item.name}</td>
+                                <td style={{ padding: '10px', fontSize: '0.8125rem', color: 'var(--text-primary)' }}>{item.name}</td>
                                 <td style={{ padding: '10px', fontSize: '0.8125rem', color: '#94a3b8' }}>{item.qty}</td>
                                 <td style={{ padding: '10px', fontSize: '0.8125rem', color: '#94a3b8' }}>${item.price.toFixed(2)}</td>
                                 <td style={{ padding: '10px', fontSize: '0.8125rem', fontWeight: 700, color: '#818cf8' }}>${(item.qty * item.price).toFixed(2)}</td>
@@ -78,7 +78,7 @@ const ScannedBillView = ({ billData, mechanicBills, onProcess, onClear }) => {
                         </div>
                     ))}
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.125rem', fontWeight: 800, paddingTop: 8, borderTop: '1px solid rgba(148,163,184,0.15)' }}>
-                        <span style={{ color: '#f1f5f9' }}>TOTAL</span>
+                        <span style={{ color: 'var(--text-primary)' }}>TOTAL</span>
                         <span style={{ color: '#818cf8' }}>${(bill.total || 0).toFixed(2)}</span>
                     </div>
                 </div>

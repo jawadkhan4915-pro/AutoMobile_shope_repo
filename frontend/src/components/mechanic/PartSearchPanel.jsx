@@ -34,7 +34,7 @@ const PartSearchPanel = ({
     });
 
     const cardStyle = {
-        background: 'rgba(15,23,42,0.75)', border: '1px solid rgba(148,163,184,0.15)',
+        background: 'var(--bg-panel, rgba(15,23,42,0.75))', border: '1px solid var(--border-glass, rgba(148,163,184,0.15))',
         borderRadius: 14, padding: 20,
     };
 
@@ -51,7 +51,7 @@ const PartSearchPanel = ({
                             style={{
                                 width: '100%', padding: '10px 14px 10px 38px',
                                 background: 'rgba(15,23,42,0.7)', border: '1px solid rgba(148,163,184,0.2)',
-                                borderRadius: 8, color: '#f1f5f9', fontSize: '0.875rem', outline: 'none',
+                                borderRadius: 8, color: 'var(--text-primary)', fontSize: '0.875rem', outline: 'none',
                             }}
                         />
                     </div>
@@ -90,7 +90,7 @@ const PartSearchPanel = ({
                                             onError={handleImageError}
                                             loading="lazy"
                                         />
-                                        <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#e2e8f0', lineHeight: 1.3 }}>{p.name}</span>
+                                        <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.3 }}>{p.name}</span>
                                     </td>
                                     <td style={{ padding: '12px', fontSize: '0.75rem', color: '#818cf8', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{p.sku}</td>
                                     <td style={{ padding: '12px', fontSize: '0.75rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{p.category}</td>
@@ -106,7 +106,7 @@ const PartSearchPanel = ({
                                             style={{
                                                 width: 60, padding: '5px 8px', borderRadius: 6, textAlign: 'center',
                                                 background: 'rgba(15,23,42,0.7)', border: '1px solid rgba(148,163,184,0.2)',
-                                                color: '#f1f5f9', fontSize: '0.8125rem', outline: 'none',
+                                                color: 'var(--text-primary)', fontSize: '0.8125rem', outline: 'none',
                                             }}
                                         />
                                     </td>

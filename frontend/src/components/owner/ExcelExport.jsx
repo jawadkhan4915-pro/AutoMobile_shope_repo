@@ -28,7 +28,7 @@ const ExcelExport = ({ transactions, products, monthLabel, monthStats, variant =
             }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 14 }}>
                     <div>
-                        <h3 style={{ margin: 0, color: '#f1f5f9', fontWeight: 800, fontSize: '1.1rem' }}>📥 Monthly Excel Report</h3>
+                        <h3 style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 800, fontSize: '1.1rem' }}>📥 Monthly Excel Report</h3>
                         <p style={{ margin: '4px 0 0', color: '#64748b', fontSize: '0.875rem' }}>
                             Download complete report for <strong style={{ color: '#818cf8' }}>{monthLabel}</strong>
                         </p>

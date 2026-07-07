@@ -10,23 +10,7 @@
   --warning-color: #f59e0b;
   --info-color: #3b82f6;
   
-  /* Neutral Colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f9fafb;
-  --bg-tertiary: #f3f4f6;
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-tertiary: #9ca3af;
-  --border-color: #e5e7eb;
-  --border-dark: #d1d5db;
-  
-  /* Dark mode colors */
-  --dark-bg-primary: #1f2937;
-  --dark-bg-secondary: #111827;
-  --dark-bg-tertiary: #374151;
-  --dark-text-primary: #f9fafb;
-  --dark-text-secondary: #d1d5db;
-  --dark-border: #374151;
+
   
   /* Spacing */
   --spacing-xs: 0.25rem;

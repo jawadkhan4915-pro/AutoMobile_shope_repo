@@ -94,7 +94,7 @@ const QRScanner = ({ onScan, onManualEntry }) => {
                         style={{
                             flex: 1, padding: '9px 12px', background: 'rgba(15,23,42,0.7)',
                             border: '1px solid rgba(148,163,184,0.2)', borderRadius: 8,
-                            color: '#f1f5f9', fontSize: '0.875rem', outline: 'none',
+                            color: 'var(--text-primary)', fontSize: '0.875rem', outline: 'none',
                         }}
                         onKeyDown={e => e.key === 'Enter' && manualId && onManualEntry(manualId)}
                     />

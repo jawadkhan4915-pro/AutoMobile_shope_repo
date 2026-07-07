@@ -4,7 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 const SalesChart = ({ data, chartRange, onRangeChange, showProfit = true, height = 220 }) => (
     <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <h3 style={{ margin: 0, color: '#f1f5f9', fontWeight: 700, fontSize: '0.9375rem' }}>
+            <h3 style={{ margin: 0, color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.9375rem' }}>
                 {showProfit ? 'Revenue vs Profit' : 'Revenue — Last 7 Days'}
             </h3>
             {onRangeChange && (
@@ -37,7 +37,7 @@ const SalesChart = ({ data, chartRange, onRangeChange, showProfit = true, height
                 <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}`} />
                 <Tooltip
-                    contentStyle={{ background: '#1e293b', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 8, color: '#f1f5f9' }}
+                    contentStyle={{ background: '#1e293b', border: '1px solid rgba(148,163,184,0.2)', borderRadius: 8, color: 'var(--text-primary)' }}
                     formatter={(v, n) => [`$${Number(v).toFixed(2)}`, n === 'revenue' ? 'Revenue' : 'Profit']}
                 />
                 <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2} fill="url(#revGrad)" />
