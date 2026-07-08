@@ -52,7 +52,7 @@ const Customers = () => {
         if (customer) {
             setCurrentCustomer(customer);
             setFormData({
-                name: customer.name,
+                name: customer.name || customer.fullName || (customer.firstName ? `${customer.firstName} ${customer.lastName || ''}`.trim() : ''),
                 email: customer.email,
                 phone: customer.phone || '',
                 address: customer.address || '',
@@ -99,11 +99,17 @@ const Customers = () => {
         }
     };
 
-    const filteredCustomers = customers.filter(customer =>
-        `${customer.name} ${customer.email} ${customer.phone || ''} ${customer.vehicleModel || ''}`
+    const getCustomerName = (customer) => {
+        if (!customer) return 'Unknown';
+        return customer.name || customer.fullName || (customer.firstName ? `${customer.firstName} ${customer.lastName || ''}`.trim() : 'Unknown');
+    };
+
+    const filteredCustomers = customers.filter(customer => {
+        const name = getCustomerName(customer);
+        return `${name} ${customer.email || ''} ${customer.phone || ''} ${customer.vehicleModel || ''}`
             .toLowerCase()
-            .includes(searchTerm.toLowerCase())
-    );
+            .includes(searchTerm.toLowerCase());
+    });
 
     if (loading) return <Loader />;
 
@@ -148,55 +154,58 @@ const Customers = () => {
 
             {/* Customers Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredCustomers.map((customer) => (
-                    <div key={customer._id} className="card hover-lift flex flex-col justify-between">
-                        <div>
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-black shadow-lg" style={{ background: 'var(--color-primary)' }}>
-                                        {customer.name.charAt(0)}
+                {filteredCustomers.map((customer) => {
+                    const name = getCustomerName(customer);
+                    return (
+                        <div key={customer._id} className="card hover-lift flex flex-col justify-between">
+                            <div>
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold text-black shadow-lg" style={{ background: 'var(--color-primary)' }}>
+                                            {name.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <h3 className="font-bold text-base text-white">{name}</h3>
+                                            <p className="text-xs text-muted">Client ID: #{customer._id.slice(-6)}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-base text-white">{customer.name}</h3>
-                                        <p className="text-xs text-muted">Client ID: #{customer._id.slice(-6)}</p>
-                                    </div>
+                                    <span className={`badge ${customer.loyaltyTier === 'Platinum' ? 'badge-danger' : 'badge-success'}`}>
+                                        {customer.loyaltyTier || 'Gold'} VIP
+                                    </span>
                                 </div>
-                                <span className={`badge ${customer.loyaltyTier === 'Platinum' ? 'badge-danger' : 'badge-success'}`}>
-                                    {customer.loyaltyTier || 'Gold'} VIP
-                                </span>
+
+                                {/* Registered Vehicle Box */}
+                                <div className="p-3 rounded-lg bg-black/40 border border-glass mb-4 space-y-1">
+                                    <div className="flex justify-between items-center text-xs">
+                                        <span className="text-muted flex items-center gap-1">🚘 Vehicle Registered</span>
+                                        <span className="font-mono font-bold text-primary">{customer.licensePlate || 'N/A'}</span>
+                                    </div>
+                                    <p className="font-bold text-white text-sm">{customer.vehicleModel || '2020 Toyota Camry'}</p>
+                                </div>
+
+                                <div className="space-y-1.5 text-xs text-muted mb-4">
+                                    <div className="flex items-center gap-2"><span>📧</span> <span className="text-white truncate">{customer.email}</span></div>
+                                    <div className="flex items-center gap-2"><span>📱</span> <span className="text-white">{customer.phone}</span></div>
+                                    <div className="flex items-center gap-2"><span>📍</span> <span className="text-white truncate">{customer.address}</span></div>
+                                </div>
                             </div>
 
-                            {/* Registered Vehicle Box */}
-                            <div className="p-3 rounded-lg bg-black/40 border border-glass mb-4 space-y-1">
-                                <div className="flex justify-between items-center text-xs">
-                                    <span className="text-muted flex items-center gap-1">🚘 Vehicle Registered</span>
-                                    <span className="font-mono font-bold text-primary">{customer.licensePlate || 'N/A'}</span>
+                            <div className="pt-3 border-t border-glass flex items-center justify-between">
+                                <div>
+                                    <p className="text-[11px] text-muted">Total Spent</p>
+                                    <p className="text-base font-extrabold text-success">${(customer.totalSpent || 0).toFixed(2)}</p>
                                 </div>
-                                <p className="font-bold text-white text-sm">{customer.vehicleModel || '2020 Toyota Camry'}</p>
-                            </div>
-
-                            <div className="space-y-1.5 text-xs text-muted mb-4">
-                                <div className="flex items-center gap-2"><span>📧</span> <span className="text-white truncate">{customer.email}</span></div>
-                                <div className="flex items-center gap-2"><span>📱</span> <span className="text-white">{customer.phone}</span></div>
-                                <div className="flex items-center gap-2"><span>📍</span> <span className="text-white truncate">{customer.address}</span></div>
+                                <div>
+                                    <p className="text-[11px] text-muted">Invoices</p>
+                                    <p className="text-sm font-bold text-white text-center">{customer.totalOrders || 1} Orders</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button onClick={() => handleOpenModal(customer)} className="btn btn-sm btn-outline">Edit</button>
+                                </div>
                             </div>
                         </div>
-
-                        <div className="pt-3 border-t border-glass flex items-center justify-between">
-                            <div>
-                                <p className="text-[11px] text-muted">Total Spent</p>
-                                <p className="text-base font-extrabold text-success">${(customer.totalSpent || 0).toFixed(2)}</p>
-                            </div>
-                            <div>
-                                <p className="text-[11px] text-muted">Invoices</p>
-                                <p className="text-sm font-bold text-white text-center">{customer.totalOrders || 1} Orders</p>
-                            </div>
-                            <div className="flex gap-2">
-                                <button onClick={() => handleOpenModal(customer)} className="btn btn-sm btn-outline">Edit</button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Modal */}
