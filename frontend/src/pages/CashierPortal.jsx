@@ -22,6 +22,7 @@ const CashierPortal = () => {
     const [successMsg, setSuccessMsg] = useState('');
     const [showCheckout, setShowCheckout] = useState(false);
     const [completedOrder, setCompletedOrder] = useState(null);
+    const [hoveredCard, setHoveredCard] = useState(null);
 
     const todayTrx = useMemo(() =>
         transactions.filter(t => new Date(t.date).toDateString() === new Date().toDateString()),
@@ -87,17 +88,34 @@ const CashierPortal = () => {
                 <div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 14, marginBottom: 20 }}>
                         {[
-                            { label: "Today's Revenue", value: `$${todayRevenue.toFixed(2)}`, icon: '💰', color: '#818cf8' },
-                            { label: 'Orders Today', value: todayTrx.length, icon: '🧾', color: '#34d399' },
-                            { label: 'Pending QR Bills', value: pendingBills.length, icon: '⏳', color: '#fbbf24' },
-                            { label: 'Avg Sale', value: todayTrx.length ? `$${(todayRevenue / todayTrx.length).toFixed(2)}` : '$0.00', icon: '📊', color: '#60a5fa' },
-                        ].map(({ label, value, icon, color }) => (
-                            <div key={label} style={{ ...cardStyle, position: 'relative', overflow: 'hidden' }}>
+                            { label: "Today's Revenue", value: `$${todayRevenue.toFixed(2)}`, icon: '💰', color: '#818cf8', targetTab: 'sales' },
+                            { label: 'Orders Today', value: todayTrx.length, icon: '🧾', color: '#34d399', targetTab: 'sales' },
+                            { label: 'Pending QR Bills', value: pendingBills.length, icon: '⏳', color: '#fbbf24', targetTab: 'scanner' },
+                            { label: 'Avg Sale', value: todayTrx.length ? `$${(todayRevenue / todayTrx.length).toFixed(2)}` : '$0.00', icon: '📊', color: '#60a5fa', targetTab: 'sales' },
+                        ].map(({ label, value, icon, color, targetTab }) => (
+                            <div
+                                key={label}
+                                onClick={() => setActiveTab(targetTab)}
+                                onMouseEnter={() => setHoveredCard(label)}
+                                onMouseLeave={() => setHoveredCard(null)}
+                                style={{
+                                    ...cardStyle,
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    transform: hoveredCard === label ? 'translateY(-3px)' : 'translateY(0)',
+                                    boxShadow: hoveredCard === label
+                                        ? `0 10px 25px -5px rgba(0,0,0,0.3), 0 0 0 1px ${color}33`
+                                        : 'none',
+                                    borderColor: hoveredCard === label ? color : 'var(--border-glass, rgba(148,163,184,0.15))',
+                                }}
+                            >
                                 <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: color, borderRadius: '3px 0 0 3px' }} />
                                 <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 8px' }}>{label}</p>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <h3 style={{ margin: 0, fontSize: '1.625rem', fontWeight: 800, color, letterSpacing: '-0.03em' }}>{value}</h3>
-                                    <span style={{ fontSize: '1.5rem' }}>{icon}</span>
+                                    <span style={{ fontSize: '1.5rem', transform: hoveredCard === label ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.2s' }}>{icon}</span>
                                 </div>
                             </div>
                         ))}

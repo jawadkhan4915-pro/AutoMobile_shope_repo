@@ -93,6 +93,7 @@ const OwnerDashboard = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [chartRange, setChartRange] = useState(7);
     const [exporting, setExporting] = useState(false);
+    const [hoveredCard, setHoveredCard] = useState(null);
 
     const now = new Date();
     const currentMonth = now.getMonth();
@@ -187,19 +188,36 @@ const OwnerDashboard = () => {
                     {/* KPI Cards */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(220px,1fr))', gap: 14, marginBottom: 20 }}>
                         {[
-                            { label: 'Monthly Revenue', value: `$${monthStats.revenue.toFixed(2)}`, icon: '💰', color: '#818cf8', sub: monthLabel },
-                            { label: 'Net Profit', value: `$${monthStats.profit.toFixed(2)}`, icon: '📈', color: '#34d399', sub: `${monthStats.revenue > 0 ? ((monthStats.profit / monthStats.revenue) * 100).toFixed(1) : 0}% margin` },
-                            { label: 'Cost of Goods', value: `$${monthStats.cost.toFixed(2)}`, icon: '📦', color: '#fbbf24', sub: 'This month' },
-                            { label: 'Total Orders', value: monthStats.orders, icon: '🧾', color: '#60a5fa', sub: 'This month' },
-                            { label: 'Stock Value', value: `$${totalStockValue.toFixed(2)}`, icon: '🏪', color: '#a78bfa', sub: `${products.length} products` },
-                            { label: 'Low Stock', value: lowStockProducts.length, icon: '⚠️', color: '#f87171', sub: 'Need reorder' },
-                        ].map(({ label, value, icon, color, sub }) => (
-                            <div key={label} style={{ ...cardStyle, position: 'relative', overflow: 'hidden' }}>
+                            { label: 'Monthly Revenue', value: `$${monthStats.revenue.toFixed(2)}`, icon: '💰', color: '#818cf8', sub: monthLabel, targetTab: 'reports' },
+                            { label: 'Net Profit', value: `$${monthStats.profit.toFixed(2)}`, icon: '📈', color: '#34d399', sub: `${monthStats.revenue > 0 ? ((monthStats.profit / monthStats.revenue) * 100).toFixed(1) : 0}% margin`, targetTab: 'reports' },
+                            { label: 'Cost of Goods', value: `$${monthStats.cost.toFixed(2)}`, icon: '📦', color: '#fbbf24', sub: 'This month', targetTab: 'reports' },
+                            { label: 'Total Orders', value: monthStats.orders, icon: '🧾', color: '#60a5fa', sub: 'This month', targetTab: 'reports' },
+                            { label: 'Stock Value', value: `$${totalStockValue.toFixed(2)}`, icon: '🏪', color: '#a78bfa', sub: `${products.length} products`, targetTab: 'stock' },
+                            { label: 'Low Stock', value: lowStockProducts.length, icon: '⚠️', color: '#f87171', sub: 'Need reorder', targetTab: 'stock' },
+                        ].map(({ label, value, icon, color, sub, targetTab }) => (
+                            <div
+                                key={label}
+                                onClick={() => setActiveTab(targetTab)}
+                                onMouseEnter={() => setHoveredCard(label)}
+                                onMouseLeave={() => setHoveredCard(null)}
+                                style={{
+                                    ...cardStyle,
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    transform: hoveredCard === label ? 'translateY(-3px)' : 'translateY(0)',
+                                    boxShadow: hoveredCard === label
+                                        ? `0 10px 25px -5px rgba(0,0,0,0.3), 0 0 0 1px ${color}33`
+                                        : 'none',
+                                    borderColor: hoveredCard === label ? color : 'var(--border-glass, rgba(148,163,184,0.15))',
+                                }}
+                            >
                                 <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: color, borderRadius: '3px 0 0 3px' }} />
                                 <p style={{ fontSize: '0.6875rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', margin: '0 0 8px' }}>{label}</p>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                                     <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, color, letterSpacing: '-0.03em' }}>{value}</h3>
-                                    <span style={{ fontSize: '1.4rem' }}>{icon}</span>
+                                    <span style={{ fontSize: '1.4rem', transform: hoveredCard === label ? 'scale(1.12)' : 'scale(1)', transition: 'transform 0.2s' }}>{icon}</span>
                                 </div>
                                 <p style={{ margin: 0, fontSize: '0.6875rem', color: '#475569', fontWeight: 500 }}>{sub}</p>
                             </div>

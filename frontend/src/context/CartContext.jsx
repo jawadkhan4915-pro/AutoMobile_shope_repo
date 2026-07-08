@@ -1,5 +1,6 @@
 import { createContext, useState, useCallback, useEffect } from 'react';
 import { cartAPI } from '../api/apiService';
+import { useStore } from '../store/useStore';
 
 export const CartContext = createContext();
 
@@ -7,6 +8,7 @@ export const CartContext = createContext();
 const tempId = () => `temp_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
 export const CartProvider = ({ children }) => {
+    const { products } = useStore();
     const [cart, setCart] = useState({ items: [], total: 0, count: 0 });
     const [loading, setLoading] = useState(false);
 
@@ -42,15 +44,33 @@ export const CartProvider = ({ children }) => {
             const message = error.response?.data?.message || 'Failed to add item';
             // Optimistic fallback: add item to local cart if backend unavailable
             setCart(prev => {
-                const existing = prev.items.find(i => (i.productId || i.product) === productId);
+                const existing = prev.items.find(i => (i.productId || i.product?._id || i.product) === productId);
                 if (existing) {
                     const items = prev.items.map(i =>
-                        (i.productId || i.product) === productId
+                        (i.productId || i.product?._id || i.product) === productId
                             ? { ...i, quantity: i.quantity + quantity, totalPrice: (i.price || 0) * (i.quantity + quantity) }
                             : i
                     );
                     const total = items.reduce((s, i) => s + (i.totalPrice || 0), 0);
                     return { ...prev, items, total, count: items.length };
+                } else {
+                    const productObj = products.find(p => (p._id || p.id) === productId);
+                    if (productObj) {
+                        const newItem = {
+                            _id: `temp_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+                            productId: productId,
+                            product: productObj,
+                            productName: productObj.name,
+                            name: productObj.name,
+                            price: productObj.price,
+                            quantity: quantity,
+                            totalPrice: productObj.price * quantity,
+                            tax: productObj.tax || 0,
+                        };
+                        const items = [...prev.items, newItem];
+                        const total = items.reduce((s, i) => s + (i.totalPrice || 0), 0);
+                        return { ...prev, items, total, count: items.length };
+                    }
                 }
                 return prev;
             });
@@ -58,7 +78,7 @@ export const CartProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-    }, [fetchCart]);
+    }, [fetchCart, products]);
 
     const updateCartItem = useCallback(async (itemId, quantity) => {
         // Optimistic update
@@ -79,7 +99,9 @@ export const CartProvider = ({ children }) => {
             }
             return { success: true };
         } catch (error) {
-            await fetchCart(); // Revert to server state on failure
+            if (error.response) {
+                await fetchCart(); // Revert to server state on failure only if server responded
+            }
             const message = error.response?.data?.message || 'Failed to update item';
             return { success: false, error: message };
         }
@@ -100,7 +122,9 @@ export const CartProvider = ({ children }) => {
             }
             return { success: true };
         } catch (error) {
-            await fetchCart(); // Revert on failure
+            if (error.response) {
+                await fetchCart(); // Revert on failure only if server responded
+            }
             const message = error.response?.data?.message || 'Failed to remove item';
             return { success: false, error: message };
         }
@@ -115,7 +139,9 @@ export const CartProvider = ({ children }) => {
             }
             return { success: true };
         } catch (error) {
-            await fetchCart(); // Revert on failure
+            if (error.response) {
+                await fetchCart(); // Revert on failure only if server responded
+            }
             const message = error.response?.data?.message || 'Failed to clear cart';
             return { success: false, error: message };
         }

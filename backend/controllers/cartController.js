@@ -38,6 +38,15 @@ const addToCart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
 
+        // Validate productId
+        const mongoose = require('mongoose');
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid product ID format',
+            });
+        }
+
         // Get product
         const product = await Product.findById(productId);
 

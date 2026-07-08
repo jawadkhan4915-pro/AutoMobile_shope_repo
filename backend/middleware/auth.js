@@ -14,7 +14,7 @@ const protect = async (req, res, next) => {
             // Handle demo tokens gracefully
             if (token.startsWith('demo-')) {
                 req.user = {
-                    _id: 'demo-user-001',
+                    _id: '000000000000000000000001',
                     name: 'Demo Admin',
                     email: 'admin@admin.com',
                     role: 'admin'
